@@ -1,0 +1,18 @@
+# The docker build context is runtime/ (provision/build_images.sh runs `docker build … .`
+# from here). Both Dockerfiles COPY named paths only, so nothing below is needed in an image;
+# without this file it is still uploaded to the docker daemon on every build.
+#
+# API keys reach a container at RUN time, never at build time: launch_rollout.py writes
+# hosts/<rollout>/runner.env and agent.env, and host/compose.yaml.tmpl loads them with
+# env_file. Keeping them out of the build context means a careless `COPY . .` added later
+# cannot bake a key into an image (and from there into an AMI).
+#
+# NOTE hosts/ (per-rollout staging, holds secrets) is ignored; host/ (scripts) is NOT —
+# Dockerfile.runner COPYs host/final_evaluation_snapshot.sh.
+.env
+.env.*
+hosts/
+campaigns/
+runs/
+scaffolds/
+**/__pycache__/

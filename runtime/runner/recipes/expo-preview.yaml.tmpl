@@ -1,0 +1,54 @@
+# revyl-bench GRADING build recipe — rendered by bench/recipes.py and written by the runner
+# over <submission tree>/.revyl/config.yaml IMMEDIATELY before `revyl build --remote`.
+# (see the remote-build design note). The agent's committed config is
+# discarded on purpose: `revyl build` executes whatever build_commands it finds in the
+# project config, so a recipe the contestant controls could `curl` a pre-built .app.
+#
+# Placeholders (Python string.Template, dollar-prefixed): project_id, app_id, scheme, pkg,
+# profile, configuration. Everything else is pinned literally so a Revyl-side default change
+# (Xcode image, Node) cannot silently change what a contestant's binary is built with.
+# (No other dollar signs may appear in this file — Template.substitute would choke on them.)
+project:
+    id: $project_id
+session:
+    idle_timeout_seconds: 1800
+build:
+    framework: expo
+    # Org-scoped caches keyed PER TASK: `npm ci` reinstalls node_modules from
+    # package-lock.json and `pod install` reconciles Pods, so a cache restored from another
+    # contestant's build cannot leak code — the key just keeps dependency sets from thrashing.
+    caches:
+        - key: bench-$pkg-node-modules
+          paths:
+              - node_modules
+        - key: bench-$pkg-ios-pods
+          paths:
+              - ios/Pods
+    profiles:
+        $profile:
+            ios:
+                # The app the version is REGISTERED on. `revyl build` (0.1.96) has no --app
+                # flag: this line is the only way to name the grading app.
+                app_id: $app_id
+                # Xcode 26.5 / Node 22 / CocoaPods 1.17 (12 CPU, 24 GB) — the default on
+                # 2026-08-25, pinned explicitly to guard against Xcode image drift.
+                image: ios-macos-26-xcode-26.5
+                timeout_seconds: 2700
+                setup_commands:
+                    - npm ci --no-audit --no-fund
+                    # native prebuild: generates ios/ from app.json + the scaffold's pinned
+                    # expo package (SDK stays pinned by package-lock.json)
+                    - npx expo prebuild --platform ios --no-install
+                    - cd ios && pod install
+                build_commands:
+                    # The workspace/scheme name is whatever `expo prebuild` generated from
+                    # app.json expo.name (sanitizedName; expected for this task: $scheme,
+                    # recorded as task.toml [runtime.agent].ios_scheme). It is derived HERE, on
+                    # the runner, rather than hard-coded, so a contestant who renames the app
+                    # still builds — a hard-coded name would turn that into a build_failed
+                    # charged to them. (A doubled dollar sign is the Template escape for one.)
+                    # -configuration Release is what BAKES the JS bundle into the .app.
+                    # Debug would boot the expo-dev-client launcher on the isolated grading
+                    # simulator and fail every step (a season-1 authoring lesson).
+                    - cd ios && WS=$$(ls -d *.xcworkspace | head -n 1) && test -n "$$WS" && xcodebuild -workspace "$$WS" -scheme "$${WS%.xcworkspace}" -configuration $configuration -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath build ARCHS=arm64
+                output_path: ios/build/Build/Products/$configuration-iphonesimulator/*.app

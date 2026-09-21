@@ -1,0 +1,50 @@
+# Device-test suite for s1-kanban-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1kb-t_3-move-assign
+        platform: ios
+    build:
+        name: bench-s1-kanban-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: instructions
+          step_description: Tap the ticket row labelled '#105'.
+        - type: instructions
+          step_description: In the 'Move to' section, tap the 'Done' button.
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the board.
+        - type: instructions
+          step_description: Scroll down on the Board to the very bottom, so the viewport is inside the 'Done' section and its last ticket rows are on screen.
+        - type: validation
+          step_description: "With the board scrolled to the very bottom, a status name is pinned at the top of the screen above the ticket rows - 'In Progress' - and the 'Done' section with its ticket rows is visible below it. (If section headings were not pinned, the top of the screen would show ticket rows with no status name above them.)"
+        - type: validation
+          step_description: "The 'In Progress' column header now reads '2 tickets, 13 points' and the 'Done' column header now reads '5 tickets, 14 points'."
+        - type: validation
+          step_description: "In the 'Done' column the ticket '#105' is listed second, after '#110' and before '#109'."
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Settings tab shows 'Total points: 45', 'Done points: 14' and 'Complete: 31%'."
+        - type: instructions
+          step_description: Tap the 'Board' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the ticket row labelled '#101'.
+        - type: instructions
+          step_description: Tap the 'Assign to me' button.
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the board.
+        - type: validation
+          step_description: "The column headers are unchanged by the assignment: 'To Do' still reads '4 tickets, 18 points' and 'Done' still reads '5 tickets, 14 points'."
+        - type: instructions
+          step_description: Tap the 'My Work' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The My Work tab now lists '#101' first, followed by '#102', '#105' and '#109'."
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'My Work' tab in the bottom tab bar again.
+        - type: validation
+          step_description: "The state persisted after navigating away and back: '#101' is still listed first in My Work."

@@ -1,0 +1,42 @@
+# Device-test suite for s1-team-chat-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1tc-t_3-threads-settings
+        platform: ios
+    build:
+        name: bench-s1-team-chat-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: instructions
+          step_description: Tap the '#general' channel row.
+        - type: instructions
+          step_description: Tap the message from Sam Chen that reads 'Standup notes are in the shared doc.' to open its thread.
+        - type: validation
+          step_description: A thread screen is shown with the parent message 'Standup notes are in the shared doc.', an existing reply 'Got it, reading now.', and a reply count of '1 reply'.
+        - type: instructions
+          step_description: 'Tap the reply input at the bottom (the input showing the hint text ''Reply in thread'') and type: on it thanks'
+        - type: instructions
+          step_description: Tap the 'Reply' button to post the reply.
+        - type: validation
+          step_description: The reply 'on it thanks' now appears in the thread and the reply count has increased to '2 replies'.
+        - type: instructions
+          step_description: Tap the back button at the top-left to leave the thread.
+        - type: instructions
+          step_description: Tap the back button at the top-left again to return to the channel list.
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Turn on the mute switch on the '#random' row.
+        - type: instructions
+          step_description: Turn on the 'Mention-only' switch.
+        - type: validation
+          step_description: 'The settings summary now shows ''Muted: #random'' and ''Mention-only: On''.'
+        - type: instructions
+          step_description: Tap the 'Channels' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar again.
+        - type: validation
+          step_description: 'The settings persisted after navigating away and back: the summary still shows ''Muted: #random'' and ''Mention-only: On''.'

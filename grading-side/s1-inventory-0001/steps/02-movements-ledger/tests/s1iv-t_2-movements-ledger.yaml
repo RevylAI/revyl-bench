@@ -1,0 +1,46 @@
+# Device-test suite for s1-inventory-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1iv-t_2-movements-ledger
+        platform: ios
+    build:
+        name: bench-s1-inventory-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: "The Items tab shows the category header 'Fasteners' with the line '4 items, 825 units' and the category header 'Packaging' with the line '4 items, 63 units'."
+        - type: validation
+          step_description: "The 'Carton tape' row shows 'On hand: 16' with a 'Low' marker, and the 'Machine screws' row shows 'On hand: 150' with no 'Low' marker."
+        - type: instructions
+          step_description: Tap the 'Anchor bolts' item row.
+        - type: validation
+          step_description: "The item detail for 'Anchor bolts' shows 'SKU: F-101', 'On hand: 45', 'Reorder threshold: 60', 'Pack size: 25' and 'Unit cost: $0.85', and its Movements section lists '#2 Issue 45' with the line 'Issued total: 45'."
+        - type: instructions
+          step_description: "Tap the 'Qty' input (the input showing the hint text '0') and type: 40"
+        - type: instructions
+          step_description: Tap the 'Receive' button.
+        - type: validation
+          step_description: "The detail now shows 'On hand: 85' and 'Received total: 40', and its Movements section lists '#12 Receive 40' at the top."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the Items catalog.
+        - type: validation
+          step_description: "The 'Anchor bolts' row now shows 'On hand: 85' with no 'Low' marker, and the 'Fasteners' category header reads '4 items, 865 units'."
+        - type: instructions
+          step_description: Tap the 'Movements' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Movements tab shows '12 movements' and the top ledger row reads '#12 Anchor bolts: Receive 40'."
+        - type: validation
+          step_description: "The Totals block shows 'Fasteners: received 40, issued 255' and 'Safety: received 24, issued 44'."
+        - type: instructions
+          step_description: Tap the 'Items' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Bubble wrap rolls' item row.
+        - type: instructions
+          step_description: "Tap the 'Qty' input (the input showing the hint text '0') and type: 5"
+        - type: instructions
+          step_description: Tap the 'Issue' button.
+        - type: validation
+          step_description: "The item detail for 'Bubble wrap rolls' now shows 'On hand: 9' and 'Issued total: 5'."

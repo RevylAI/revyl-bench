@@ -1,0 +1,46 @@
+# Device-test suite for s1-commerce-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1cm-t_3-cart-checkout-confirmation
+        platform: ios
+    build:
+        name: bench-s1-commerce-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: The Home tab shows a 'Search products' input and a grid of at least six product cards. The bottom tab bar shows Home, Cart, and Checkout.
+        - type: instructions
+          step_description: Tap the 'Cobalt Travel Mug' product card on the Home grid to open its detail screen.
+        - type: validation
+          step_description: The screen is the product detail screen for 'Cobalt Travel Mug', showing the product title, the price $24, the description, and an 'Add to cart' button.
+        - type: instructions
+          step_description: Tap the 'Add to cart' button exactly once. Do not tap it again — the screen will look unchanged (the brief 'Added to cart' label may already have reverted); the result is verified on the Cart tab.
+        - type: instructions
+          step_description: Tap the back control at the top-left to return to the tabs view.
+        - type: instructions
+          step_description: Tap the 'Cart' tab in the bottom tab bar.
+        - type: validation
+          step_description: The Cart tab shows the heading 'Cart' and exactly one cart row, for 'Cobalt Travel Mug', with '$24 each', quantity 1 between minus (−) and plus (+) stepper buttons, and a line subtotal of $24. The Subtotal row at the bottom shows $24.
+        - type: instructions
+          step_description: Tap the plus (+) button on the 'Cobalt Travel Mug' cart row exactly once.
+        - type: validation
+          step_description: The 'Cobalt Travel Mug' cart row now shows quantity 2 and a line subtotal of $48, and the Subtotal row shows $48.
+        - type: instructions
+          step_description: Tap the minus (−) button on the 'Cobalt Travel Mug' cart row exactly once.
+        - type: validation
+          step_description: The 'Cobalt Travel Mug' cart row is back to quantity 1 with a line subtotal of $24, and the Subtotal row shows $24.
+        - type: instructions
+          step_description: Tap the plus (+) button on the 'Cobalt Travel Mug' cart row exactly once.
+        - type: validation
+          step_description: The 'Cobalt Travel Mug' cart row shows quantity 2 and a line subtotal of $48, and the Subtotal row shows $48.
+        - type: instructions
+          step_description: Tap the 'Checkout' tab in the bottom tab bar.
+        - type: validation
+          step_description: The Checkout tab shows the heading 'Checkout', a line 'Cobalt Travel Mug × 2' with $48, and a totals card with Subtotal $48, 'Tax (8%)' $3.84, and Total $51.84, plus a 'Place order' button.
+        - type: instructions
+          step_description: Tap the 'Place order' button.
+        - type: validation
+          step_description: "The order confirmation screen is visible: heading 'Order placed', the text 'Thanks — your order has been confirmed.', and rows Order ID 'ORD-000001', Items 2, and Total charged $51.84."

@@ -1,0 +1,36 @@
+# Device-test suite for s1-split-bill-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1sb-t_2-groups-expenses
+        platform: ios
+    build:
+        name: bench-s1-split-bill-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: "The Groups list shows four groups named 'Tahoe Trip', 'Lunch Crew', 'Apartment' and 'Ski Weekend', with net lines reading exactly 'You owe $193.63', 'You are owed $3.74', 'You are owed $99.99' and 'You are owed $84.33' respectively."
+        - type: instructions
+          step_description: Tap the 'Ski Weekend' group row.
+        - type: validation
+          step_description: "The Ski Weekend group screen is open and the expense list begins with 'Lift passes' reading 'you borrowed $156.00'. A description input and an amount input are pinned at the bottom."
+        - type: instructions
+          step_description: Scroll down the expense list until the last expense is visible.
+        - type: validation
+          step_description: "The bottom of the Ski Weekend list shows 'Hot tub fee' reading 'you borrowed $13.13'."
+        - type: instructions
+          step_description: "Tap the description input at the bottom (the input showing the hint text 'What was it for?') and type: Boba"
+        - type: instructions
+          step_description: "Tap the amount input at the bottom (the input showing the hint text '0.00') and type: 26.00"
+        - type: instructions
+          step_description: Tap the 'Add' button.
+        - type: validation
+          step_description: "A new expense 'Boba' for $26.00 is visible without any further scrolling, reading 'You paid' and 'you lent $19.50'."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the group list.
+        - type: instructions
+          step_description: Tap the 'Balances' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Balances tab shows rows reading exactly 'Priya Nair owes you $22.87', 'Marco Silva owes you $67.94' and 'You owe Elena Vasquez $76.88', and the Balances tab item in the bottom tab bar shows a numeric badge reading 3."

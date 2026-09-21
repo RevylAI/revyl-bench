@@ -1,0 +1,28 @@
+# The applications to set up in your two Revyl organisations, one package name per line.
+# Read by: python3 runtime/provision/setup_orgs.py {grading,agent,check} --tasks-file runtime/provision/tasks.txt
+# (also the default when neither --all nor --task is given).
+#
+# DELETE LINES (or comment them out with #) TO PROVISION A SUBSET. Each line is one
+# application: its whole-app benchmark task AND its step tasks (s1-<app>-0001-step1..3),
+# which grade with the same four suites in the same grading app, so they are set up together.
+# Re-running after adding lines back only creates what is missing.
+s1-auctions-0001
+s1-bookings-0001
+s1-commerce-0001
+s1-food-delivery-0001
+s1-gradebook-0001
+s1-habits-0001
+s1-health-fitness-0001
+s1-inventory-0001
+s1-invoicing-0001
+s1-kanban-0001
+s1-league-0001
+s1-library-0001
+s1-payroll-0001
+s1-personal-finance-0001
+s1-recipes-0001
+s1-ride-booking-0001
+s1-scheduler-0001
+s1-split-bill-0001
+s1-team-chat-0001
+s1-till-0001

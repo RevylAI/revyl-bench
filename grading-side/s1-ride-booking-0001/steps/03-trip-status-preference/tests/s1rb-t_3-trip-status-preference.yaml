@@ -1,0 +1,42 @@
+# Device-test suite for s1-ride-booking-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1rb-t_3-trip-status-preference
+        platform: ios
+    build:
+        name: bench-s1-ride-booking-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: instructions
+          step_description: Tap the 'Trip' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Trip tab shows a 'Confirm ride' button and a Preferred fare tier section showing 'Preferred fare: Economy'."
+        - type: instructions
+          step_description: Tap the 'Confirm ride' button.
+        - type: validation
+          step_description: "The screen shows 'Ride ID: WSH-1423', 'Driver: Sarah — Toyota Camry', and 'Status: Matching'."
+        - type: instructions
+          step_description: Tap the 'Advance status' button.
+        - type: validation
+          step_description: "The status shows 'Status: Driver assigned'."
+        - type: instructions
+          step_description: Tap the 'Advance status' button.
+        - type: validation
+          step_description: "The status shows 'Status: En route'."
+        - type: instructions
+          step_description: Tap the 'Advance status' button.
+        - type: validation
+          step_description: "The status shows 'Status: Arriving' and the Advance button is disabled showing 'Arrived'."
+        - type: instructions
+          step_description: Tap the 'Premium' option in the Preferred fare tier section.
+        - type: validation
+          step_description: "The summary text reads 'Preferred fare: Premium'."
+        - type: instructions
+          step_description: Tap the 'Search' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Trip' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The preferred fare summary still reads 'Preferred fare: Premium' and the ride still shows 'Status: Arriving' with 'Ride ID: WSH-1423' — both survived navigation."

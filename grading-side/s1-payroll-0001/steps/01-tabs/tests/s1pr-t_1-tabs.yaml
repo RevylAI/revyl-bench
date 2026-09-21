@@ -1,0 +1,30 @@
+# Device-test suite for s1-payroll-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1pr-t_1-tabs
+        platform: ios
+    build:
+        name: bench-s1-payroll-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: The app has launched without a red screen or runtime error dialog, and a bottom tab bar shows Team, Payroll, and Settings tabs.
+        - type: instructions
+          step_description: Tap the 'Payroll' tab in the bottom tab bar.
+        - type: validation
+          step_description: The Payroll tab is selected and the screen shows the heading 'Payroll' without any crash or error.
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: The Settings tab is selected and the screen shows the heading 'Settings' without any crash or error.
+        - type: instructions
+          step_description: Tap the 'Team' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Team tab lists four employees in order 'Ava Torres', 'Ben Okafor', 'Chloe Nguyen', 'Dev Patel', with 'Ava Torres' showing '$22.50/h' and '6 shifts' and 'Dev Patel' showing '$16.00/h' and '4 shifts'."
+        - type: instructions
+          step_description: Tap the 'Ava Torres' row.
+        - type: validation
+          step_description: "A screen titled 'Ava Torres' has been pushed and lists her shifts in weekday order, including 'Mon 07:00-16:30', 'Wed 07:00-15:30', 'Fri 07:00-17:00' and 'Sat 08:00-13:00'."

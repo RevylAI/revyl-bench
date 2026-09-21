@@ -1,0 +1,37 @@
+# revyl-bench runner image — the grader: build, grade, END collection.
+# Build (from repo root):  docker build -f image/Dockerfile.runner -t revyl-bench-runner:v1 .
+#
+# Holds: python3 + bench/ + runner/, git (untar → git init for EAS's file listing; git bundle
+# at END), node + eas-cli (the ONLY place `eas build` runs with a token), the revyl CLI at
+# the same pinned version as the agent image. Credentials arrive via runner.env at run time.
+FROM python:3.12-slim
+# revyl CLI pin: single source of truth = image/REVYL_CLI_VERSION (see Dockerfile.agent for the
+# reasoning). No build-arg override on purpose.
+ARG EAS_VERSION=22.0.0
+ARG NODE_MAJOR=22
+ENV DEBIAN_FRONTEND=noninteractive PYTHONUNBUFFERED=1 PYTHONPATH=/app CI=1
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      ca-certificates curl git jq bash procps tini \
+    && curl -fsSL https://deb.nodesource.com/setup_${NODE_MAJOR}.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && rm -rf /var/lib/apt/lists/* \
+    && npm i -g eas-cli@${EAS_VERSION} \
+    && pip install --no-cache-dir pyyaml
+
+# revyl CLI at the pinned version, asserted at build time (same contract as Dockerfile.agent).
+# The pin file is copied to BOTH /opt/bench (operator convention) and /app/image (where
+# bench/revyl.py reads it: Path(__file__).parents[1] / image / REVYL_CLI_VERSION).
+ENV REVYL_NO_UPDATE_NOTIFIER=1 REVYL_TELEMETRY_DISABLED=1
+COPY image/REVYL_CLI_VERSION /opt/bench/REVYL_CLI_VERSION
+COPY image/REVYL_CLI_VERSION /app/image/REVYL_CLI_VERSION
+RUN v="$(cat /opt/bench/REVYL_CLI_VERSION)" && test -n "$v" \
+    && curl -fsSL https://revyl.com/install.sh | REVYL_VERSION="$v" REVYL_INSTALL_DIR=/usr/local/bin sh \
+    && revyl --version | grep -Fx "revyl version $v"
+
+WORKDIR /app
+COPY bench /app/bench
+COPY runner /app/runner
+COPY host/final_evaluation_snapshot.sh /app/host/final_evaluation_snapshot.sh
+RUN mkdir -p /mailbox/submit /mailbox/feedback /log /control /tmp/grade
+ENTRYPOINT ["/usr/bin/tini", "--", "python", "-m", "runner.main"]

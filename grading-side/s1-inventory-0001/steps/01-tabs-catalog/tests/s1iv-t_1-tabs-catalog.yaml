@@ -1,0 +1,30 @@
+# Device-test suite for s1-inventory-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1iv-t_1-tabs-catalog
+        platform: ios
+    build:
+        name: bench-s1-inventory-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: "The app has launched without a red screen or runtime error dialog, a bottom tab bar shows Items, Movements, Stocktake, Reorder and Settings tabs, and the Items screen shows the heading 'Items' with category headers 'Fasteners', 'Packaging' and 'Safety' and item rows including 'Anchor bolts' and 'Pallet wrap'."
+        - type: instructions
+          step_description: Tap the 'Movements' tab in the bottom tab bar.
+        - type: validation
+          step_description: The Movements tab is selected and the screen shows the heading 'Movements' without any crash or error.
+        - type: instructions
+          step_description: Tap the 'Stocktake' tab in the bottom tab bar.
+        - type: validation
+          step_description: The Stocktake tab is selected and the screen shows the heading 'Stocktake' without any crash or error.
+        - type: instructions
+          step_description: Tap the 'Reorder' tab in the bottom tab bar.
+        - type: validation
+          step_description: The Reorder tab is selected and the screen shows the heading 'Reorder' without any crash or error.
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: The Settings tab is selected and the screen shows the heading 'Settings' without any crash or error.

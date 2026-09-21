@@ -1,0 +1,19 @@
+.claude/settings.local.json
+
+# local secrets — never commit
+.env
+.env.*
+# ...except the example: runtime/.env.example lists the variable NAMES a deployment sets,
+# with empty values. `.env.*` above would otherwise ignore it, and the docs that say
+# "copy .env.example to .env" would point at nothing.
+!.env.example
+
+# python bytecode
+__pycache__/
+*.pyc
+.claude/
+
+# the revyl CLI copies pulled tests into <project>/.revyl/tests — never commit them inside a
+# scaffold: a scaffold is copied whole into the agent's workspace, and the agent must not see the suites
+runtime/scaffolds/*/.revyl/tests/
+/.revyl/

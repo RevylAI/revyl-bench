@@ -1,0 +1,48 @@
+# Device-test suite for s1-split-bill-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1sb-final-e2e
+        platform: ios
+        tags:
+            - e2e
+    build:
+        name: bench-s1-split-bill-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: "The Groups list shows 'Tahoe Trip' reading 'You owe $193.63' and 'Ski Weekend' reading 'You are owed $84.33'."
+        - type: instructions
+          step_description: Tap the 'Ski Weekend' group row.
+        - type: instructions
+          step_description: Scroll down the expense list until the last expense is visible.
+        - type: validation
+          step_description: "The bottom of the Ski Weekend list shows 'Hot tub fee' reading 'you borrowed $13.13'."
+        - type: instructions
+          step_description: "Tap the description input at the bottom (the input showing the hint text 'What was it for?') and type: Boba"
+        - type: instructions
+          step_description: "Tap the amount input at the bottom (the input showing the hint text '0.00') and type: 26.00"
+        - type: instructions
+          step_description: Tap the 'Add' button.
+        - type: validation
+          step_description: "A new expense 'Boba' for $26.00 is visible without any further scrolling, reading 'You paid' and 'you lent $19.50'."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the group list.
+        - type: instructions
+          step_description: Tap the 'Balances' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Balances tab shows 'Marco Silva owes you $67.94', a summary line at the top reading 'Total: you are owed $13.93', and a badge reading 3 on the Balances tab item."
+        - type: instructions
+          step_description: Tap the 'Settle up' button on the Marco Silva row.
+        - type: validation
+          step_description: "The Marco Silva row now reads 'Marco Silva is settled up', the summary reads 'Total: you owe $54.01', and the badge reads 2."
+        - type: instructions
+          step_description: Tap the 'Groups' tab in the bottom tab bar.
+        - type: validation
+          step_description: "'Tahoe Trip' now reads 'You owe $188.88', 'Lunch Crew' reads 'You are owed $13.66' and 'Ski Weekend' reads 'You are owed $21.22'."
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Settings tab shows 'Total owed to you: $22.87' and 'Total you owe: $76.88'."

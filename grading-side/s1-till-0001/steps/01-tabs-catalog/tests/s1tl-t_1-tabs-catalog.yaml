@@ -1,0 +1,30 @@
+# Device-test suite for s1-till-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1tl-t_1-tabs-catalog
+        platform: ios
+    build:
+        name: bench-s1-till-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: "The app has launched without a red screen or runtime error dialog, a bottom tab bar shows Sale, Refunds, Till and Report tabs, and the Sale screen shows the heading 'Sale' with category headers 'Drinks', 'Food' and 'Merch' and product rows including 'Americano' with '$3.20' and 'Tote bag' with '$12.50'."
+        - type: instructions
+          step_description: Tap the 'Refunds' tab in the bottom tab bar.
+        - type: validation
+          step_description: The Refunds tab is selected and the screen shows the heading 'Refunds' without any crash or error.
+        - type: instructions
+          step_description: Tap the 'Till' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Till tab shows the heading 'Till', the line 'Opening float: $84.00', and a 'Drawer at open' block including the lines '15 x $1' and '100 x 1c'."
+        - type: instructions
+          step_description: Tap the 'Report' tab in the bottom tab bar.
+        - type: validation
+          step_description: The Report tab is selected and the screen shows the heading 'Report' without any crash or error.
+        - type: instructions
+          step_description: Tap the 'Sale' tab in the bottom tab bar.
+        - type: validation
+          step_description: The Sale tab is selected again and the catalog still shows the 'Americano' row with '$3.20', without any crash or error.

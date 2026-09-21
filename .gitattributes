@@ -1,0 +1,13 @@
+# Every text file is stored AND checked out with LF line endings, on every platform.
+#
+# Why this file exists: Git for Windows defaults to core.autocrlf=true, which checks text
+# files out with CRLF. Two things in this repository break on CRLF:
+#   1. Shell scripts are copied verbatim into Linux containers and hosts
+#      (image/Dockerfile.agent COPYs container/*.sh; launch_rollout.py copies host/seed.sh).
+#      A CRLF shebang is "#!/usr/bin/env bash\r" and the container dies at start with
+#      /usr/bin/env: 'bash\r': No such file or directory.
+#   2. host/seed.sh commits the scaffold and compares the commit hash with task.toml
+#      base_commit. The hash covers file bytes, so a CRLF scaffold hashes differently and
+#      every rollout exits 3 with "base_commit mismatch".
+# text=auto lets git detect binaries (the scaffold PNGs) and leave them untouched.
+* text=auto eol=lf

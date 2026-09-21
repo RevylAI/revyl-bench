@@ -1,0 +1,48 @@
+# Device-test suite for s1-league-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1ls-t_3-record
+        platform: ios
+    build:
+        name: bench-s1-league-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: instructions
+          step_description: Tap the 'Fixtures' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Scroll down to the 'Record a result' section.
+        - type: instructions
+          step_description: In the 'Record a result' section, tap the 'Calder' button in the 'Home' row.
+        - type: instructions
+          step_description: Tap the 'Ashford' button in the 'Away' row.
+        - type: instructions
+          step_description: "Tap the home score input and type: 3"
+        - type: instructions
+          step_description: "Tap the away score input and type: 0"
+        - type: instructions
+          step_description: Tap the 'Record' button.
+        - type: instructions
+          step_description: Scroll down the fixtures list until the last row is visible.
+        - type: validation
+          step_description: "The last row of the fixtures list is the newly recorded result 'Calder 3 - 0 Ashford'."
+        - type: instructions
+          step_description: Tap the 'Table' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The 'Calder' row is visible without any further scrolling, and the column label header row showing 'Team', 'P', 'W', 'D', 'L', 'GF', 'GA', 'GD' and 'Pts' is still visible pinned at the top."
+        - type: validation
+          step_description: "The table has re-sorted and now lists 'Brightwell', 'Holloway', 'Fenwick', 'Calder', 'Garrick' from the top, with 'Calder' having moved up above 'Garrick'."
+        - type: validation
+          step_description: "The 'Calder' row now shows the values 5 2 1 2 10 9 1 7."
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Settings tab shows 'Matches played: 21' and 'Goals scored: 73'."
+        - type: instructions
+          step_description: Tap the 'Table' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar again.
+        - type: validation
+          step_description: "The state persisted after navigating away and back: the Settings tab still shows 'Matches played: 21' and 'Goals scored: 73'."

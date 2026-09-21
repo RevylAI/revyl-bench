@@ -1,0 +1,60 @@
+# Device-test suite for s1-gradebook-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1gb-final-e2e
+        platform: ios
+        tags:
+            - e2e
+    build:
+        name: bench-s1-gradebook-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: The Students tab lists 'Aisha 85.3 B', 'Ben 90.0 A', 'Chloe 85.3 B', 'Diana 72.5 C', 'Ethan 85.3 B' and 'Farah 75.1 C' in that order.
+        - type: instructions
+          step_description: Tap the 'Farah' roster row.
+        - type: validation
+          step_description: "The student detail for 'Farah' shows 'Homework average: 88.3%', 'Quizzes average: 86.3%', 'Exams average: 63.0%', 'Overall grade: 75.1' and 'Letter grade: C'."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the roster.
+        - type: instructions
+          step_description: Tap the 'Class' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Assessments block shows 'Quiz 2 82.5% (5 scores)' and 'Midterm 82.5% (6 scores)', and the line 'Hardest assessment: Quiz 2'."
+        - type: instructions
+          step_description: Scroll down the Class tab until the Ranking block is visible.
+        - type: validation
+          step_description: The Ranking block lists '1. Ben 90.0 A', '2. Ethan 85.3 B', '3. Aisha 85.3 B' and '4. Chloe 85.3 B' in that order.
+        - type: instructions
+          step_description: Tap the 'Students' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Scroll down the Students tab until the 'Record a score' section is visible.
+        - type: instructions
+          step_description: In the 'Record a score' section, tap the 'Diana' button in the 'Student' row.
+        - type: instructions
+          step_description: Tap the 'Quiz 2' button in the 'Assessment' row.
+        - type: instructions
+          step_description: "Tap the score input and type: 38"
+        - type: instructions
+          step_description: Tap the 'Save' button.
+        - type: instructions
+          step_description: Tap the 'Diana' roster row.
+        - type: validation
+          step_description: "The student detail for 'Diana' shows 'Quiz 2 38/40', 'Quizzes average: 70.0%', 'Overall grade: 80.0' and 'Letter grade: B'."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the roster.
+        - type: instructions
+          step_description: Tap the 'Class' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Assessments block shows 'Quiz 2 84.6% (6 scores)' and the line now reads 'Hardest assessment: Midterm'."
+        - type: instructions
+          step_description: Scroll down the Class tab until the Ranking block is visible.
+        - type: validation
+          step_description: The Ranking block now ends with '5. Diana 80.0 B' and '6. Farah 75.1 C'.
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Settings tab shows 'Students: 6', 'Assessments: 6' and 'Scores recorded: 35', and the Weights block lists 'Homework 20%', 'Quizzes 30%' and 'Exams 50%'."

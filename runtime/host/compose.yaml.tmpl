@@ -1,0 +1,47 @@
+# Rendered per rollout by launch_rollout.py into /rollouts/<rollout_id>/compose.yaml
+# Identical for local Docker (v1) and EC2 (v2). Placeholders are double-braced tokens.
+#
+# Two services, one shared mailbox. The runner sees the agent's workspace/home READ-ONLY
+# and only for END collection (git bundle, transcript, device sessions) — grading uses the
+# untarred submission, never the live tree. The agent sees feedback/ READ-ONLY and never
+# sees runner.env, rollout.json, control/, or the runner's /log (RAW reports live there).
+name: {{ROLLOUT_ID}}
+
+services:
+  runner:
+    image: {{RUNNER_IMAGE}}
+    container_name: {{ROLLOUT_ID}}-runner
+    env_file: [ ./runner.env ]
+    volumes:
+      - ./rollout.json:/rollout.json:ro
+      - ./mailbox/submit:/mailbox/submit:ro
+      - ./mailbox/feedback:/mailbox/feedback
+      - ./log:/log
+      - ./control:/control:ro
+      - workspace:/agent-workspace:ro
+      - agent-home:/agent-home:ro
+    restart: "no"
+
+  agent:
+    image: {{AGENT_IMAGE}}
+    container_name: {{ROLLOUT_ID}}-agent
+    env_file: [ ./agent.env ]
+    entrypoint: {{AGENT_ENTRYPOINT}}
+    volumes:
+      - workspace:/workspace
+      - agent-home:/home/agent
+      - ./mailbox/submit:/mailbox/submit
+      - ./mailbox/feedback:/mailbox/feedback:ro
+      - ./harness-log:/log
+      - ./setup.sh:/setup.sh:ro
+      - ./invoke.sh:/invoke.sh:ro
+      - ./invoke_resume.sh:/invoke_resume.sh:ro
+    depends_on: [ runner ]
+    restart: "no"
+    # no docker socket, no host network, no privileged flags — egress only
+
+volumes:
+  # named volumes (not bind mounts) for the code trees: Linux-native fs semantics inside
+  # the container (Metro file watching, npm ci speed, uid 1000 ownership) on every host OS.
+  workspace: {}
+  agent-home: {}

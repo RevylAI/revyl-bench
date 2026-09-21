@@ -1,0 +1,38 @@
+# Device-test suite for s1-health-fitness-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1hf-final-e2e
+        platform: ios
+    build:
+        name: bench-s1-health-fitness-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "5"
+        - type: instructions
+          step_description: Tap on the 'Progress' tab in the bottom tab bar.
+        - type: validation
+          step_description: 'Verify the Progress screen shows ''Weekly total: 190 min'' and ''Top exercise: Running''.'
+        - type: instructions
+          step_description: Tap on the 'Log' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap on the 'Cycling' exercise option in the Log screen.
+        - type: instructions
+          step_description: Tap the 'Save workout' button.
+        - type: instructions
+          step_description: Tap on the 'History' tab in the bottom tab bar.
+        - type: validation
+          step_description: Verify the History screen shows a new entry under 'Jul 18' as 'Cycling — 45 min, 400 cal'.
+        - type: instructions
+          step_description: Tap on the 'Progress' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap on the '60 min' daily goal option in the Daily goal section.
+        - type: validation
+          step_description: 'Verify the ''60 min'' option is selected and the summary text reads ''Daily goal: 60 min''.'
+        - type: instructions
+          step_description: Tap on the 'Log' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap on the 'Progress' tab in the bottom tab bar.
+        - type: validation
+          step_description: 'Verify the Progress screen still shows ''Daily goal: 60 min'' and the ''60 min'' option remains selected.'

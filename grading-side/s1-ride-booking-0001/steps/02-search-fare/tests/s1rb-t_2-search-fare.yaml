@@ -1,0 +1,34 @@
+# Device-test suite for s1-ride-booking-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1rb-t_2-search-fare
+        platform: ios
+    build:
+        name: bench-s1-ride-booking-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: "The Search tab is showing a list of destinations including Downtown Office, Airport Terminal, and Riverside Park, and a map labels area showing 'Pickup: Current Location' and 'Dropoff: Select a destination'."
+        - type: instructions
+          step_description: Tap the 'Downtown Office' destination row.
+        - type: validation
+          step_description: "The map labels area now shows 'Pickup: Current Location' and 'Dropoff: Downtown Office'."
+        - type: instructions
+          step_description: Tap the 'Fare' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Fare tab shows three fare cards: Economy showing $12.50 — ETA 5 min, Premium showing $24.00 — ETA 3 min, and XL showing $36.00 — ETA 4 min, and the selected fare summary reads 'Select a fare tier'."
+        - type: instructions
+          step_description: Tap the 'Economy' fare card.
+        - type: validation
+          step_description: "The selected fare summary now reads 'Economy: $12.50 — ETA 5 min' and the Economy card shows a Selected badge."
+        - type: instructions
+          step_description: Tap the 'Premium' fare card.
+        - type: validation
+          step_description: "The selected fare summary now reads 'Premium: $24.00 — ETA 3 min' and the Premium card shows a Selected badge, confirming the price and ETA cascaded to the new tier."
+        - type: instructions
+          step_description: Double-tap the 'Premium' fare card rapidly.
+        - type: validation
+          step_description: "The selected fare summary still reads 'Premium: $24.00 — ETA 3 min' — the double-tap did not deselect the fare."

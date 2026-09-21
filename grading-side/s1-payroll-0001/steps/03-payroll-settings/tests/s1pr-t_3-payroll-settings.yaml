@@ -1,0 +1,50 @@
+# Device-test suite for s1-payroll-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1pr-t_3-payroll-settings
+        platform: ios
+    build:
+        name: bench-s1-payroll-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: instructions
+          step_description: Tap the 'Payroll' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Payroll tab shows a Company block reading 'Total payroll $3203.43', 'Top earner Ava Torres $1203.75' and 'Overtime share 11.6%'."
+        - type: validation
+          step_description: "The Employees section lists 'Ava Torres $1203.75', 'Chloe Nguyen $807.89', 'Ben Okafor $798.51' and 'Dev Patel $393.28' in that order, highest gross first."
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Settings tab shows a Pay rules block with the lines 'Overtime x1.5', 'Evening +$3.00/h after 18:00' and 'Unpaid break 30 min over 6h'."
+        - type: validation
+          step_description: "The Settings Week block reads 'Employees: 4', 'Shifts: 20', 'Paid hours: 143.08', 'Overtime hours: 11.50' and 'Evening hours: 15.92'."
+        - type: instructions
+          step_description: Tap the 'Team' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Dev Patel' row.
+        - type: instructions
+          step_description: Tap the 'Thu 09:00-16:30' shift row.
+        - type: instructions
+          step_description: In the 'New end time' row, tap the '19:30' button.
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the 'Dev Patel' timesheet.
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the Team roster.
+        - type: instructions
+          step_description: Tap the 'Payroll' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Company block now reads 'Total payroll $3271.93' and 'Overtime share 12.9%', 'Top earner Ava Torres $1203.75' is unchanged, and the Employees section shows 'Dev Patel $461.78'."
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Settings Week block now reads 'Paid hours: 146.08', 'Overtime hours: 13.50' and 'Evening hours: 17.42', while 'Employees: 4' and 'Shifts: 20' are unchanged."
+        - type: instructions
+          step_description: Tap the 'Team' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar again.
+        - type: validation
+          step_description: "The state persisted after navigating away and back: the Settings Week block still reads 'Paid hours: 146.08' and 'Overtime hours: 13.50'."

@@ -1,0 +1,44 @@
+# Device-test suite for s1-split-bill-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1sb-t_3-detail-settle
+        platform: ios
+    build:
+        name: bench-s1-split-bill-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: instructions
+          step_description: Tap the 'Lunch Crew' group row.
+        - type: instructions
+          step_description: Tap the expense row labelled 'Ramen'.
+        - type: validation
+          step_description: "An expense detail screen is shown for 'Ramen' with the amount $52.00, the text 'Marco Silva paid', and a Split section listing 'You $17.34', 'Marco Silva $17.33' and 'Elena Vasquez $17.33'."
+        - type: instructions
+          step_description: Tap the back button at the top-left to leave the expense detail.
+        - type: instructions
+          step_description: Tap the back button at the top-left again to return to the group list.
+        - type: instructions
+          step_description: Tap the 'Balances' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Balances tab shows a row reading 'Marco Silva owes you $61.44' with a 'Settle up' button, a summary line at the top reading 'Total: you owe $5.57', and a badge reading 3 on the Balances tab item."
+        - type: instructions
+          step_description: Tap the 'Settle up' button on the Marco Silva row.
+        - type: validation
+          step_description: "The Marco Silva row now reads 'Marco Silva is settled up', the summary line reads 'Total: you owe $67.01', and the badge on the Balances tab item now reads 2."
+        - type: instructions
+          step_description: Tap the 'Groups' tab in the bottom tab bar.
+        - type: validation
+          step_description: "Settling changed the group rows: 'Tahoe Trip' now reads 'You owe $188.88', 'Lunch Crew' reads 'You are owed $13.66', 'Ski Weekend' reads 'You are owed $8.22', and 'Apartment' is unchanged at 'You are owed $99.99'."
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Settings tab shows 'Total owed to you: $16.37' and 'Total you owe: $83.38'."
+        - type: instructions
+          step_description: Turn on the 'Hide settled members' switch.
+        - type: instructions
+          step_description: Tap the 'Balances' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Balances tab no longer shows any row for Marco Silva, and still shows 'Priya Nair owes you $16.37'."

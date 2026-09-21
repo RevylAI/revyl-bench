@@ -1,0 +1,28 @@
+# Device-test suite for s1-kanban-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1kb-t_2-board-mywork
+        platform: ios
+    build:
+        name: bench-s1-kanban-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: "The Board shows three column sections named 'To Do', 'In Progress' and 'Done', with the header lines '4 tickets, 18 points', '3 tickets, 16 points' and '4 tickets, 11 points' respectively."
+        - type: validation
+          step_description: "In the 'To Do' column the first two ticket rows are '#101' followed by '#104', and '#102' and '#103' come after them in that order."
+        - type: instructions
+          step_description: Tap the ticket row labelled '#105'.
+        - type: validation
+          step_description: "A ticket detail screen is shown for '#105' titled 'Dark mode audit', with the lines 'Status: In Progress', 'Priority: Medium', 'Points: 3' and 'Assignee: You'."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the board.
+        - type: validation
+          step_description: "The My Work item in the bottom tab bar shows a numeric badge reading 3."
+        - type: instructions
+          step_description: Tap the 'My Work' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The My Work tab lists exactly three tickets assigned to you, '#102' grouped under 'To Do', '#105' under 'In Progress' and '#109' under 'Done'."

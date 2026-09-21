@@ -1,0 +1,42 @@
+# Device-test suite for s1-personal-finance-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1pf-final-e2e
+        platform: ios
+    build:
+        name: bench-s1-personal-finance-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: The app has launched to the Accounts screen showing account cards 'Everyday Checking' $2,450.00 and 'Rainy Day Savings' $8,000.00 above a date-grouped transaction list.
+        - type: instructions
+          step_description: Tap the 'Pizza Night' transaction row in the transaction list, scrolling down first if it is not visible.
+        - type: instructions
+          step_description: Tap the 'Dining' category row.
+        - type: instructions
+          step_description: Tap the 'Apply category' button.
+        - type: validation
+          step_description: The button now reads 'Category updated' and the 'Dining' category row shows the checkmark.
+        - type: instructions
+          step_description: Tap the 'Back to Accounts' button.
+        - type: instructions
+          step_description: Tap the 'Budget' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Budget screen shows 'Dining: $240.00 of $200.00' with the red warning 'Over budget: Dining +$40.00', and 'Entertainment: $40.00 of $100.00' with no warning."
+        - type: instructions
+          step_description: Tap the 'Insights' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Insights screen shows 'Top category: Rent' and the Alert preferences summary 'Weekly alert: Off'."
+        - type: instructions
+          step_description: Tap the 'Weekly spending alert' toggle row in the Alert preferences section.
+        - type: validation
+          step_description: "The Weekly spending alert row shows 'On' and the summary text reads 'Weekly alert: On'."
+        - type: instructions
+          step_description: Tap the 'Accounts' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Insights' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Weekly spending alert setting persisted across navigation - the row still shows 'On' and the summary still reads 'Weekly alert: On'."

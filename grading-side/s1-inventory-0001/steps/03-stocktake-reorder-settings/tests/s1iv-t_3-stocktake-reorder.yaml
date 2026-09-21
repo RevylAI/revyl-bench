@@ -1,0 +1,50 @@
+# Device-test suite for s1-inventory-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1iv-t_3-stocktake-reorder
+        platform: ios
+    build:
+        name: bench-s1-inventory-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: instructions
+          step_description: Tap the 'Reorder' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Reorder tab shows '6 items below threshold, 18 packs to order' with the rows 'Anchor bolts: order 1 pack', 'Carton tape: order 3 packs', 'Large cartons: order 3 packs', 'Pallet wrap: order 7 packs', 'Hi-vis vests: order 2 packs' and 'Work gloves: order 2 packs', there is no 'Machine screws' row, and the Reorder item in the bottom tab bar shows a numeric badge reading 6."
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Settings tab shows a Stock block with 'Items tracked: 12', 'Units on hand: 1158' and 'Stock value: $708.65', a Ledger block with 'Movements: 11', 'Units received: 32', 'Units issued: 344' and 'Units adjusted: 0', and a Rules block with 'Restock buffer: 10 units'."
+        - type: instructions
+          step_description: Tap the 'Stocktake' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Stocktake tab shows the state line 'Draft count' and a Variance summary block with 'Items short: 6', 'Items over: 2', 'Items exact: 4', 'Units short: 30', 'Units over: 22', 'Net variance: -8 units' and 'Shrinkage: 2.6%'. In the rows beneath it, the 'Hex nuts' row shows 'Expected 250', 'Counted 244', 'Variance -6' and 'Shrink 2.4%'; the 'Carton tape' row shows 'Shrink 6.3%'; the 'Washers' row shows 'Variance +21' and no 'Shrink' text."
+        - type: instructions
+          step_description: Tap the 'Items' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Bubble wrap rolls' item row.
+        - type: instructions
+          step_description: "Tap the 'Qty' input (the input showing the hint text '0') and type: 5"
+        - type: instructions
+          step_description: Tap the 'Receive' button.
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the Items catalog.
+        - type: instructions
+          step_description: Tap the 'Stocktake' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The 'Bubble wrap rolls' row now shows 'Expected 19', 'Counted 14' and 'Variance -5', and the Variance summary shows 'Items short: 7' and 'Shrinkage: 3.0%'."
+        - type: instructions
+          step_description: Tap the 'Apply count' button.
+        - type: validation
+          step_description: "The state line reads 'Count applied' and the Variance summary shows 'Items exact: 12', 'Net variance: 0 units' and 'Shrinkage: 0.0%'."
+        - type: instructions
+          step_description: Tap the 'Reorder' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Reorder tab shows '7 items below threshold, 20 packs to order' with the rows 'Machine screws: order 1 pack' and 'Carton tape: order 4 packs', and the Reorder item in the bottom tab bar shows a numeric badge reading 7."
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Settings tab now shows 'Units on hand: 1150', 'Stock value: $696.29', 'Movements: 21', 'Units received: 37', 'Units issued: 344' and 'Units adjusted: -13'."

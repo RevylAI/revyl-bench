@@ -1,0 +1,133 @@
+# RUNBOOK — fix the reported defect in the app in `/workspace` and get it verified
+
+You are working in `/workspace`: a complete Expo SDK {{EXPO_SDK}} / TypeScript app that
+implements the product contract in `task/`, plus a QA report in `task/bug-report.md`, and
+this runbook. This file is environment knowledge only — the product is defined solely by
+the contract files, and the job is defined by the bug report.
+
+<!-- Repair-task twin of RUNBOOK.md.tmpl (chosen by launch_rollout for tasks named
+     *-repair-*). The sections below Your job are copied from it — edit both files
+     together. What differs: the app is complete and passes everything except what the
+     report describes; the job is root-cause repair, not building; there is no
+     checkpoint step. -->
+
+## Your job
+
+The app passed its full acceptance suite before a change was made to it. A QA run on the
+current tree reported the failures listed in `task/bug-report.md`: each entry is what the
+tester expected to see, in the words of the product contract. Find the root cause and fix
+it. Everything else in the app is correct and must stay as it is — a change that breaks
+something the report does not mention is a regression and is penalised.
+
+Your work is graded by a hidden suite of **four device tests** run on a cloud iOS
+simulator against a build of the source you submit: one test per step of the contract
+(`t_1`, `t_2`, `t_3`) plus a final end-to-end test (`final`). **Every submission is
+graded against all four.** The run ends when all four pass, when you have used all
+**{{MAX_SUBMISSIONS}} submissions**, or at the wall clock ({{WALL_CLOCK_MIN}} min from
+start).
+
+**A submission is a final-exam attempt, not a progress check.** Reproduce the report in
+the dev loop first — it is fast and free — then fix, then verify on-device that the
+reported behaviour is correct AND that the rest of the app still is. Expect your first
+submission to be your only one.
+
+## How your run is evaluated
+
+In priority order:
+1. **What passes** — the verdict vector of your final submission; fixing the report
+   without breaking anything else dominates all other factors.
+2. **How few submissions you used** — each extra submission meaningfully lowers your
+   evaluation. Submitting to see what the hidden tests say is a losing strategy.
+3. **How little agent time you spent** — time you spend working (build/grading wait is
+   excluded). Reproducing on-device is time well spent; rewriting working code is not.
+Breaking something that previously passed (a regression) is penalized separately and
+severely. Protocol violations (see Environment facts) can invalidate the run entirely.
+
+Read `AGENTS.md` and check https://docs.expo.dev/versions/v{{EXPO_SDK}}.0.0/ before writing
+Expo code. Commit your work in small, clear commits as you go (`git` is local-only; there is
+no remote).
+
+## Environment facts
+
+- Tools on PATH: `node`, `npm`, `npx`, `git`, `jq`, `python3`, `revyl` (Revyl CLI). Never run
+  `revyl upgrade`. Never invent CLI flags — check `revyl <cmd> --help` first.
+- IDs you need are in `infra_runtime.json` (`rollout_id`, `agent_dev_app_id`,
+  `devclient_version_id`, `max_submissions`, `submissions_used`).
+- **JS-only dependencies.** The device dev loop runs your JS inside a pre-built dev-client
+  whose native module set is fixed (the default Expo template + `expo-dev-client`). Pure-JS
+  packages (e.g. `zustand`) are fine. Do NOT add packages that need native code
+  (`expo-sqlite`, `@react-native-async-storage/async-storage`, etc.): the dev loop will
+  break and you will lose time. In-memory state is sufficient for every requirement.
+- No clocks or randomness in app logic (`Date.now()`, `new Date()`, `Math.random()`): the
+  contract fixes every value; the grader warns on these patterns.
+- Do not create Revyl apps/builds/tests, do not edit `submit.sh`, `infra_runtime.json`,
+  or anything under `task/`, and never delete `.revyl/device-sessions.json`.
+
+## Iterating on a device (cheap — hot reload)
+
+Start a dev session pinned to the provided dev-client (this pin is mandatory):
+
+```bash
+revyl dev --platform ios --no-build --build-version-id {{DEVCLIENT_VERSION_ID}} \
+  --no-open --detach --json --timeout 900
+```
+This returns a JSON handshake when the simulator is up and your Metro bundle is loaded.
+Then drive the app with `revyl device` primitives, e.g.
+`revyl device tap --target "Trip tab"`, `revyl device type --target "Search" --text "Airport"`,
+`revyl device clear-text --target "..."`, `revyl device screenshot --out shot.png`,
+`revyl device hierarchy`, `revyl device validation "the Budget row shows Dining: $240.00 of $200.00"`.
+Prefer these primitives; reserve `revyl device instruction "..."` for genuinely multi-step
+intents. Edits to your source hot-reload into the running session. When done, stop YOUR
+sessions by index: `revyl device list --json` shows them, `revyl device stop -s <index>`
+stops one. Never run `revyl device stop --all` — the device org is shared and `--all`
+kills other people's sessions (idle sessions time out after 900 s anyway). If the dev loop
+fails the same way twice in a row, stop and reconsider — do not loop retries.
+
+## Getting verified (the graded run)
+
+The grader builds a **baked** iOS simulator binary from the source you submit and runs the
+four hidden tests against it on an isolated simulator. It cannot see your dev-loop state:
+a code change reaches the grader only through a new submission.
+
+```bash
+./submit.sh              # commits your tree, packages it, returns immediately: SUBMITTED k=<k>
+./submit.sh wait <k>     # polls for ≤5 min and returns; call it again until you get VERDICT
+./submit.sh status       # last submission, its status, submissions used
+```
+A submission takes ~12–20 minutes end to end (cloud build ≈ 2–5 min + device suite
+≈ 10 min). Each `wait` call returns within 5 minutes with either the verdict or
+`PENDING …` — keep calling it (or do other work in between). When done it prints
+`VERDICT k=<k>  t_1=PASS|FAIL  t_2=…  t_3=…  final=…  regressions=[…]` and the path to
+the feedback bundle `/mailbox/feedback/s<k>/`:
+- `failed_criteria.json` — for each failed check: the criterion text, the judge's reasoning,
+  and screenshot paths of what the device actually showed;
+- `screenshots/` — those screenshots;
+- `launch_errors.txt` — only if the app failed to launch or crashed.
+Read the failed criteria first; diagnose against the contract; fix in the dev loop; resubmit.
+There is no other feedback channel and the tests themselves are never shown.
+
+Budget: **{{MAX_SUBMISSIONS}} submissions** for this run. Reproduce, fix and verify in the
+dev loop, then submit. A build failure (`failure_kind=build_failed`) also counts as a
+submission — make sure `npx tsc --noEmit` and `npx expo export --platform ios` succeed
+locally before submitting.
+
+## Discipline
+
+- Fix the cause, not the symptom: the report describes what the screen showed, the defect
+  is in the code that produces it.
+- Change as little as the fix needs. Follow the contract literally: exact strings, exact
+  numbers, exact formats.
+- Commit before every submission (`submit.sh` does this for you) and keep the working tree
+  buildable at all times.
+- If you cannot make progress, write an honest `NOTES.md` describing what you found —
+  never claim a pass you did not observe in a VERDICT line.
+
+
+## Evaluation at the coding deadline
+
+At the {{WALL_CLOCK_MIN}}-minute deadline, the runner stops your agent. If you have
+not submitted anything, it freezes your source, including uncommitted work, builds
+it, and runs the task's required tests. Otherwise it uses your explicit submissions,
+finishing any pending grade without grading your final workspace again. You cannot
+edit or receive feedback after the deadline.
+Use explicit submissions during the episode to get feedback while you can act on it.

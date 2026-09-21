@@ -1,0 +1,144 @@
+# RUNBOOK — build the app in `task/` and get it verified
+
+You are working in `/workspace`: a native SwiftUI iOS project (Swift 5.9, iOS 17, one
+target `{{APP}}`, no package dependencies — the standard library and SwiftUI are all you
+have and all you need), a `task/` directory with the product contract, and this runbook.
+This file is environment knowledge only — the task is defined solely by the contract files.
+
+## Your job
+
+Implement the mobile app defined in:
+- `task/instruction.md` (root contract: product, exact seed data, formats, rules), and
+- `task/steps/01-*/instruction.md` → `task/steps/02-*/instruction.md` → `task/steps/03-*/instruction.md`
+  (step contracts, in that order — each builds on the previous).
+
+Your work is graded by a hidden suite of **four device tests** run on a cloud iOS
+simulator against a Release build of the source you submit: one test per step (`t_1`,
+`t_2`, `t_3`) plus a final end-to-end test (`final`). **Every submission is graded against
+all four**, so a later change that breaks an earlier step is caught. The run ends when all
+four pass, when you have used all **{{MAX_SUBMISSIONS}} submissions**, or at the wall clock
+({{WALL_CLOCK_MIN}} min from start).
+
+**A submission is a final-exam attempt, not a progress check.** Check steps in the
+development loop below. Submit only when you have verified on-device that all three steps
+AND the full end-to-end journey work. Expect your first submission to be your only one.
+
+## How your run is evaluated
+
+In priority order:
+1. **What passes** — the verdict vector of your final submission; completing everything
+   dominates all other factors.
+2. **How few submissions you used** — each extra submission meaningfully lowers your
+   evaluation. Submitting to see what the hidden tests say is a losing strategy.
+3. **How little agent time you spent** — time you spend working (build/grading wait is
+   excluded). Verifying on-device is time well spent; idling and flailing are not.
+Breaking something that previously passed (a regression) is penalized separately and
+severely. Protocol violations (see Environment facts) can invalidate the run entirely.
+
+Read `AGENTS.md` first. Commit your work in small, clear commits as you go (`git` is
+local-only; there is no remote).
+
+## Checkpoint every step (required — not a submission)
+
+The moment you believe a step is complete — verified on a device, before you start the
+next one — record it:
+
+```bash
+./checkpoint.sh 1        # after finishing step 1; likewise 2 and 3
+```
+
+This commits and tags your tree as that step's boundary. It is NOT a submission: nothing is
+graded, no feedback is returned, and it does not consume any budget. It is required even
+when everything works first try. `./checkpoint.sh list` shows what you have recorded.
+
+## Environment facts
+
+- Tools on PATH: `git`, `jq`, `python3`, `revyl` (Revyl CLI). **There is no Swift compiler
+  in this container**: compilation happens on Revyl's build runner, through `./devbuild.sh`
+  (development) and `./submit.sh` (grading). Never run `revyl upgrade`. Never invent CLI
+  flags — check `revyl <cmd> --help` first.
+- Source lives under `Sources/{{APP}}/`, a synchronized folder: any `.swift` file you add
+  anywhere under it is compiled, no project edit needed. **Never hand-edit
+  `{{APP}}.xcodeproj`** or `project.yml`.
+- No clocks or randomness in app logic (`Date()`, `.random`, `UUID()` shown on screen): the
+  contract fixes every value.
+- IDs you need are in `infra_runtime.json` (`rollout_id`, `agent_dev_app_id`,
+  `max_submissions`, `submissions_used`, `max_dev_builds`, `dev_builds_used`).
+- Do not create Revyl apps, builds or tests by hand (`revyl app create`, `revyl build` run
+  directly, `revyl test create` are protocol violations); use `./devbuild.sh` and
+  `./submit.sh` only. Do not edit `submit.sh`, `devbuild.sh`, `infra_runtime.json`,
+  `.revyl/config.yaml`, anything under `task/` or `.devbuilds/`, and never delete
+  `.revyl/device-sessions.json`.
+
+## Iterating on a device (a remote build per iteration — there is no hot reload)
+
+Every look at your app on a device costs one remote build of two to four minutes, and your
+budget is **{{MAX_DEV_BUILDS}} development builds**. Batch your edits: implement a whole
+step, re-read it against the contract, then build.
+
+```bash
+./devbuild.sh            # commits your tree, queues a Debug simulator build: BUILD k=<k> job=<job>
+./devbuild.sh wait <k>   # polls ≤5 min: READY k=<k> version-id=<id>, or FAILED with the compiler lines, or PENDING (call again)
+./devbuild.sh status     # builds used / max, last build state
+```
+A failed build costs one of the {{MAX_DEV_BUILDS}}: read the `error:` lines it prints (file,
+line, message), fix, rebuild. When READY, open that version on a device and drive it:
+
+```bash
+revyl dev --platform ios --no-build --build-version-id <version-id> --no-open --detach --json --timeout 900
+revyl device tap --target "Clients tab"
+revyl device type --target "Name" --text "Acme"
+revyl device validation "the Invoices screen shows the total 'Total: $1,240.00'"
+revyl device screenshot --out shot.png
+revyl device hierarchy
+```
+Prefer these primitives; reserve `revyl device instruction "..."` for genuinely multi-step
+actions. Check several things per session — every session is a build you paid for — and
+read `revyl device hierarchy` before assuming a control is where you think it is. Stop
+sessions by index: `revyl device list --json` shows them, `revyl device stop -s <index>`
+stops one. Never run `revyl device stop --all` — the device org is shared.
+
+## Getting verified (the graded run)
+
+The grader builds a **Release** simulator binary from the source you submit and runs the
+four hidden tests against it on an isolated simulator. A code change reaches the grader
+only through a new submission.
+
+```bash
+./submit.sh              # commits your tree, packages it, returns immediately: SUBMITTED k=<k>
+                         # refused unless this exact tree has a READY development build
+./submit.sh wait <k>     # polls for ≤5 min and returns; call it again until you get VERDICT
+./submit.sh status       # last submission, its status, submissions used
+```
+A submission takes ~12–20 minutes end to end (cloud build ≈ 2–4 min + device suite
+≈ 10 min). When done it prints
+`VERDICT k=<k>  t_1=PASS|FAIL  t_2=…  t_3=…  final=…  regressions=[…]` and the path to
+the feedback bundle `/mailbox/feedback/s<k>/`:
+- `failed_criteria.json` — for each failed check: the criterion text, the judge's reasoning,
+  and screenshot paths of what the device actually showed;
+- `screenshots/` — those screenshots;
+- `launch_errors.txt` — only if the app failed to launch or crashed.
+Read the failed criteria first; diagnose against the contract; fix; verify with a
+development build; resubmit. The tests themselves are never shown.
+
+Budget: **{{MAX_SUBMISSIONS}} submissions** and **{{MAX_DEV_BUILDS}} development builds**.
+A build failure on submission (`failure_kind=build_failed`) also counts as a submission —
+submit only a tree whose last `./devbuild.sh wait` printed READY.
+
+## Discipline
+
+- Follow the contract literally: exact strings, exact numbers, exact formats.
+- Checkpoint each step as you finish it: `./checkpoint.sh <n>` (see above).
+- Keep the tree compiling: one broken file fails the whole build and costs a build.
+- If you cannot make progress, write an honest `NOTES.md` describing what works and what
+  does not — never claim a pass you did not observe in a VERDICT line.
+
+
+## Evaluation at the coding deadline
+
+At the {{WALL_CLOCK_MIN}}-minute deadline, the runner stops your agent. If you have
+not submitted anything, it freezes your source, including uncommitted work, builds
+it, and runs the task's required tests. Otherwise it uses your explicit submissions,
+finishing any pending grade without grading your final workspace again. You cannot
+edit or receive feedback after the deadline.
+Use explicit submissions during the episode to get feedback while you can act on it.

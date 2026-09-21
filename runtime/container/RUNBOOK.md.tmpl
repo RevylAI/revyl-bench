@@ -1,0 +1,146 @@
+# RUNBOOK — build the app in `task/` and get it verified
+
+You are working in `/workspace`: an Expo SDK {{EXPO_SDK}} / TypeScript project (a fresh
+`create-expo-app` default template with `expo-dev-client`), a `task/` directory with the
+product contract, and this runbook. This file is environment knowledge only — the task is
+defined solely by the contract files.
+
+## Your job
+
+Implement the mobile app defined in:
+- `task/instruction.md` (root contract: product, exact seed data, formats, rules), and
+- `task/steps/01-*/instruction.md` → `task/steps/02-*/instruction.md` → `task/steps/03-*/instruction.md`
+  (step contracts, in that order — each builds on the previous).
+
+Your work is graded by a hidden suite of **four device tests** run on a cloud iOS
+simulator against a build of the source you submit: one test per step (`t_1`, `t_2`, `t_3`)
+plus a final end-to-end test (`final`). **Every submission is graded against all four**,
+so a later change that breaks an earlier step is caught. The run ends when all four pass,
+when you have used all **{{MAX_SUBMISSIONS}} submissions**, or at the wall clock
+({{WALL_CLOCK_MIN}} min from start).
+
+**A submission is a final-exam attempt, not a progress check.** Check individual steps
+and subtasks in the dev loop — it is fast and free. Submit only when you have verified
+on-device that all three steps AND the full end-to-end journey work. Expect your first
+submission to be your only one.
+
+## How your run is evaluated
+
+In priority order:
+1. **What passes** — the verdict vector of your final submission; completing everything
+   dominates all other factors.
+2. **How few submissions you used** — each extra submission meaningfully lowers your
+   evaluation. Submitting to see what the hidden tests say is a losing strategy: the
+   penalty for an extra submission always outweighs the time saved by skipping your own
+   on-device verification.
+3. **How little agent time you spent** — time you spend working (build/grading wait is
+   excluded). Verifying on-device is time well spent; idling and flailing are not.
+Breaking something that previously passed (a regression) is penalized separately and
+severely. Protocol violations (see Environment facts) can invalidate the run entirely.
+
+Read `AGENTS.md` and check https://docs.expo.dev/versions/v{{EXPO_SDK}}.0.0/ before writing
+Expo code. Commit your work in small, clear commits as you go (`git` is local-only; there is
+no remote).
+
+## Checkpoint every step (required — not a submission)
+
+The moment you believe a step is complete — verified in the dev loop, before you start the
+next one — record it:
+
+```bash
+./checkpoint.sh 1        # after finishing step 1; likewise 2 and 3
+```
+
+This commits and tags your tree as that step's boundary. It is NOT a submission: nothing is
+graded, no feedback is returned, and it does not consume your submission budget or count
+against you in any way. It is required even when everything works first try and you intend
+to submit immediately afterwards — a run should end with all three checkpoints recorded.
+`./checkpoint.sh list` shows what you have recorded so far.
+
+## Environment facts
+
+- Tools on PATH: `node`, `npm`, `npx`, `git`, `jq`, `python3`, `revyl` (Revyl CLI). Never run
+  `revyl upgrade`. Never invent CLI flags — check `revyl <cmd> --help` first.
+- The Revyl CLI skills are installed for your harness (`revyl-cli-dev-loop`,
+  `revyl-cli-create`, `revyl-cli-atlas`, `revyl-cli-auth-bypass`); your harness discovers
+  them on startup. The rules in this runbook still apply: do not create Revyl apps,
+  builds or tests.
+- IDs you need are in `infra_runtime.json` (`rollout_id`, `agent_dev_app_id`,
+  `devclient_version_id`, `max_submissions`, `submissions_used`).
+- **JS-only dependencies.** The device dev loop runs your JS inside a pre-built dev-client
+  whose native module set is fixed (the default Expo template + `expo-dev-client`). Pure-JS
+  packages (e.g. `zustand`) are fine. Do NOT add packages that need native code
+  (`expo-sqlite`, `@react-native-async-storage/async-storage`, etc.): the dev loop will
+  break and you will lose time. In-memory state is sufficient for every requirement.
+- No clocks or randomness in app logic (`Date.now()`, `new Date()`, `Math.random()`): the
+  contract fixes every value; the grader warns on these patterns.
+- Do not create Revyl apps/builds/tests, do not edit `submit.sh`, `infra_runtime.json`,
+  or anything under `task/`, and never delete `.revyl/device-sessions.json`.
+
+## Iterating on a device (cheap — hot reload)
+
+Start a dev session pinned to the provided dev-client (this pin is mandatory):
+
+```bash
+revyl dev --platform ios --no-build --build-version-id {{DEVCLIENT_VERSION_ID}} \
+  --no-open --detach --json --timeout 900
+```
+This returns a JSON handshake when the simulator is up and your Metro bundle is loaded.
+Then drive the app with `revyl device` primitives, e.g.
+`revyl device tap --target "Trip tab"`, `revyl device type --target "Search" --text "Airport"`,
+`revyl device clear-text --target "..."`, `revyl device screenshot --out shot.png`,
+`revyl device hierarchy`, `revyl device validation "the Budget row shows Dining: $240.00 of $200.00"`.
+Prefer these primitives; reserve `revyl device instruction "..."` for genuinely multi-step
+intents. Edits to your source hot-reload into the running session. When done, stop YOUR
+sessions by index: `revyl device list --json` shows them, `revyl device stop -s <index>`
+stops one. Never run `revyl device stop --all` — the device org is shared and `--all`
+kills other people's sessions (idle sessions time out after 900 s anyway). If the dev loop
+fails the same way twice in a row, stop and reconsider — do not loop retries.
+
+## Getting verified (the graded run)
+
+The grader builds a **baked** iOS simulator binary from the source you submit and runs the
+four hidden tests against it on an isolated simulator. It cannot see your dev-loop state:
+a code change reaches the grader only through a new submission.
+
+```bash
+./submit.sh              # commits your tree, packages it, returns immediately: SUBMITTED k=<k>
+./submit.sh wait <k>     # polls for ≤5 min and returns; call it again until you get VERDICT
+./submit.sh status       # last submission, its status, submissions used
+```
+A submission takes ~12–20 minutes end to end (cloud build ≈ 2–5 min + device suite
+≈ 10 min). Each `wait` call returns within 5 minutes with either the verdict or
+`PENDING …` — keep calling it (or do other work in between). When done it prints
+`VERDICT k=<k>  t_1=PASS|FAIL  t_2=…  t_3=…  final=…  regressions=[…]` and the path to
+the feedback bundle `/mailbox/feedback/s<k>/`:
+- `failed_criteria.json` — for each failed check: the criterion text, the judge's reasoning,
+  and screenshot paths of what the device actually showed;
+- `screenshots/` — those screenshots;
+- `launch_errors.txt` — only if the app failed to launch or crashed.
+Read the failed criteria first; diagnose against the contract; fix in the dev loop; resubmit.
+There is no other feedback channel and the tests themselves are never shown.
+
+Budget: **{{MAX_SUBMISSIONS}} submissions** for this run. Iterate in the dev loop until
+you have verified the COMPLETE app on-device (all three steps and the end-to-end journey),
+then submit. A build failure (`failure_kind=build_failed`) also counts as a submission —
+make sure `npx tsc --noEmit` and `npx expo export --platform ios` succeed locally before
+submitting.
+
+## Discipline
+
+- Follow the contract literally: exact strings, exact numbers, exact formats.
+- Checkpoint each step as you finish it: `./checkpoint.sh <n>` (see above).
+- Commit before every submission (`submit.sh` does this for you) and keep the working tree
+  buildable at all times.
+- If you cannot make progress, write an honest `NOTES.md` describing what works and what
+  does not — never claim a pass you did not observe in a VERDICT line.
+
+
+## Evaluation at the coding deadline
+
+At the {{WALL_CLOCK_MIN}}-minute deadline, the runner stops your agent. If you have
+not submitted anything, it freezes your source, including uncommitted work, builds
+it, and runs the task's required tests. Otherwise it uses your explicit submissions,
+finishing any pending grade without grading your final workspace again. You cannot
+edit or receive feedback after the deadline.
+Use explicit submissions during the episode to get feedback while you can act on it.

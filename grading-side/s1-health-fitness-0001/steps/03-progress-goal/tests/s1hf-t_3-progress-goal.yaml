@@ -1,0 +1,28 @@
+# Device-test suite for s1-health-fitness-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1hf-t_3-progress-goal
+        platform: ios
+    build:
+        name: bench-s1-health-fitness-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "5"
+        - type: instructions
+          step_description: Tap on the 'Progress' tab in the bottom tab bar.
+        - type: validation
+          step_description: 'Verify the Progress screen shows ''Weekly total: 190 min'' and ''Top exercise: Running''.'
+        - type: instructions
+          step_description: Tap on the '60 min' daily goal option in the Daily goal section.
+        - type: validation
+          step_description: 'Verify the ''60 min'' option is selected and the summary text reads ''Daily goal: 60 min''.'
+        - type: instructions
+          step_description: Tap the '60 min' daily goal option again immediately to test the debounce.
+        - type: instructions
+          step_description: Tap on the 'Log' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap on the 'Progress' tab in the bottom tab bar.
+        - type: validation
+          step_description: 'Verify the Progress screen still shows ''Daily goal: 60 min'' and the ''60 min'' option remains selected.'

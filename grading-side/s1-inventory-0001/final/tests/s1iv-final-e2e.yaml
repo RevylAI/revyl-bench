@@ -1,0 +1,56 @@
+# Device-test suite for s1-inventory-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1iv-final-e2e
+        platform: ios
+        tags:
+            - e2e
+    build:
+        name: bench-s1-inventory-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: "The Items tab shows category headers 'Fasteners', 'Packaging' and 'Safety', with the 'Anchor bolts' row reading 'On hand: 45' with a 'Low' marker and the 'Machine screws' row reading 'On hand: 150' with no 'Low' marker."
+        - type: instructions
+          step_description: Tap the 'Anchor bolts' item row.
+        - type: instructions
+          step_description: "Tap the 'Qty' input (the input showing the hint text '0') and type: 40"
+        - type: instructions
+          step_description: Tap the 'Receive' button.
+        - type: validation
+          step_description: "The item detail for 'Anchor bolts' now shows 'On hand: 85' and 'Received total: 40'."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the Items catalog.
+        - type: instructions
+          step_description: Tap the 'Movements' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Movements tab shows '12 movements', the top ledger row reads '#12 Anchor bolts: Receive 40', and the Totals block shows 'Fasteners: received 40, issued 255'."
+        - type: instructions
+          step_description: Tap the 'Reorder' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Reorder tab shows '5 items below threshold, 17 packs to order' with a 'Pallet wrap: order 7 packs' row and no 'Anchor bolts' row, and the Reorder item in the bottom tab bar shows a numeric badge reading 5."
+        - type: instructions
+          step_description: Tap the 'Stocktake' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The 'Anchor bolts' row on the stocktake sheet shows 'Expected 85', 'Counted 45', 'Variance -40' and 'Shrink 47.1%'."
+        - type: validation
+          step_description: "The Variance summary shows 'Items short: 7', 'Net variance: -48 units' and 'Shrinkage: 5.8%'."
+        - type: instructions
+          step_description: Tap the 'Apply count' button.
+        - type: validation
+          step_description: "The state line reads 'Count applied' and the Variance summary shows 'Items exact: 12' and 'Shrinkage: 0.0%'."
+        - type: instructions
+          step_description: Tap the 'Reorder' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Reorder tab shows '7 items below threshold, 20 packs to order' with the rows 'Anchor bolts: order 1 pack' and 'Machine screws: order 1 pack', and the Reorder item in the bottom tab bar shows a numeric badge reading 7."
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Settings tab shows 'Units on hand: 1150', 'Stock value: $696.29', 'Fasteners: $114.04', 'Movements: 21', 'Units received: 72', 'Units issued: 344' and 'Units adjusted: -48'."
+        - type: instructions
+          step_description: Tap the 'Items' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The 'Anchor bolts' row reads 'On hand: 45' with a 'Low' marker again, matching the applied count."

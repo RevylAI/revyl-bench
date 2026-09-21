@@ -1,0 +1,26 @@
+# Device-test suite for s1-ride-booking-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1rb-t_1-tabs
+        platform: ios
+    build:
+        name: bench-s1-ride-booking-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: The app has launched without a red screen or runtime error dialog, and a bottom tab bar shows Search, Fare, and Trip tabs.
+        - type: instructions
+          step_description: Tap the 'Fare' tab in the bottom tab bar.
+        - type: validation
+          step_description: The Fare tab is selected and the screen shows the heading 'Fare' without any crash or error.
+        - type: instructions
+          step_description: Tap the 'Trip' tab in the bottom tab bar.
+        - type: validation
+          step_description: The Trip tab is selected and the screen shows the heading 'Trip' without any crash or error.
+        - type: instructions
+          step_description: Tap the 'Search' tab in the bottom tab bar.
+        - type: validation
+          step_description: The Search tab is selected and the screen shows the heading 'Search' without any crash or error.

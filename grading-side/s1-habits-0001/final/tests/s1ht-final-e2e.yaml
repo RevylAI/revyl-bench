@@ -1,0 +1,44 @@
+# Device-test suite for s1-habits-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1ht-final-e2e
+        platform: ios
+    build:
+        name: bench-s1-habits-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: "The app has launched cleanly and the Habits tab lists six habits beginning with 'Morning run', 'Read 20 pages', 'Meditate' and 'No sugar'."
+        - type: validation
+          step_description: "The 'Morning run' row shows 'Current streak: 9', the 'Meditate' row shows 'Current streak: 0' and the 'No sugar' row shows 'Current streak: 23'."
+        - type: instructions
+          step_description: Tap the 'No sugar' habit row.
+        - type: validation
+          step_description: "The detail screen for 'No sugar' shows 'Current streak: 23', 'Longest streak: 23' and 'Completion: 100%'."
+        - type: instructions
+          step_description: Scroll down the Day log until the last day is visible.
+        - type: validation
+          step_description: "With the Day log scrolled to the bottom, the habit name 'No sugar' and the line 'Current streak: 23' are still visible pinned at the top, and the log shows 'Day 28: frozen'."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the habits list.
+        - type: instructions
+          step_description: Tap the 'Today' tab in the bottom tab bar.
+        - type: instructions
+          step_description: In the 'No sugar' row, tap the control labelled 'Mark done'.
+        - type: instructions
+          step_description: Tap the 'Habits' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The 'No sugar' row now shows 'Current streak: 24'."
+        - type: instructions
+          step_description: Tap the 'No sugar' habit row.
+        - type: validation
+          step_description: "The detail screen for 'No sugar' now shows 'Longest streak: 24' and 'Completion: 100%'."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the habits list.
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Settings tab shows 'Habits tracked: 6', 'Done today: 5' and 'Longest streak overall: 24'."

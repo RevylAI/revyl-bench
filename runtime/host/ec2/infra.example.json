@@ -1,0 +1,15 @@
+{
+  "region": "us-west-2",
+  "account": "<aws-account-id>",
+  "vpc_id": "<vpc-id>",
+  "subnet_id": "<subnet-id>",
+  "security_group_id": "<security-group-id>",
+  "key_name": "revyl-bench",
+  "pem_path": "~/.ssh/revyl-bench.pem",
+  "bucket": "<runs-bucket>",
+  "instance_profile": "revyl-bench-host",
+  "instance_type": "m6a.xlarge",
+  "ami_id": "<ami-id>",
+  "ami_runtime_tree": "<runtime-tree-hash, bench.hosts.runtime_tree_hash of the baked checkout>",
+  "ami_runtime_commit": "<commit the image was baked from>"
+}

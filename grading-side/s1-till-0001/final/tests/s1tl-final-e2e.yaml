@@ -1,0 +1,60 @@
+# Device-test suite for s1-till-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1tl-final-e2e
+        platform: ios
+        tags:
+            - e2e
+    build:
+        name: bench-s1-till-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: "The app has launched on the Sale tab, a bottom tab bar shows Sale, Refunds, Till and Report tabs, and the catalog shows the 'Americano' row with '$3.20' and the 'Tote bag' row with '$12.50'."
+        - type: instructions
+          step_description: Tap the 'Americano' product row in the catalog.
+        - type: instructions
+          step_description: Tap the 'Americano' product row again, as a second deliberate tap.
+        - type: instructions
+          step_description: Tap the 'Brownie' product row in the catalog.
+        - type: validation
+          step_description: "The current sale panel shows 'Americano x2 $6.40', 'Brownie x1 $3.45' and the line 'Total: $9.85'."
+        - type: instructions
+          step_description: "Tap the 'Tendered' input (the input showing the hint text '0.00') and type: 20.00"
+        - type: instructions
+          step_description: Tap the 'Tender' button.
+        - type: validation
+          step_description: "The Last sale block shows 'Change due: $10.15' with the lines '1 x $10', '1 x 10c' and '5 x 1c'."
+        - type: instructions
+          step_description: Tap the 'Iced tea' product row in the catalog.
+        - type: instructions
+          step_description: Tap the 'Bagel' product row in the catalog.
+        - type: instructions
+          step_description: "Tap the 'Tendered' input (the input showing the hint text '0.00') and type: 5.75"
+        - type: instructions
+          step_description: Tap the 'Tender' button.
+        - type: validation
+          step_description: "The Last sale block shows 'Change due: $0.30' with the lines '1 x 25c' and '5 x 1c', and no '10c' line."
+        - type: instructions
+          step_description: Tap the 'Refunds' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Tote bag' product row.
+        - type: instructions
+          step_description: Tap the 'Changed mind (CHG)' reason option.
+        - type: instructions
+          step_description: Tap the 'Refund' button.
+        - type: validation
+          step_description: "The Refunds screen shows the line 'Refunded: Tote bag $12.50 (CHG)'."
+        - type: instructions
+          step_description: Tap the 'Till' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Reconciliation block shows 'Opening float: $84.00', 'Cash sales: $47.20', 'Cash refunds: $15.95' and 'Expected cash: $115.25', and the Transactions list shows '#7 Refund $12.50' at the top."
+        - type: instructions
+          step_description: Tap the 'Report' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Run Z-report' button.
+        - type: validation
+          step_description: "The report shows 'Sales: 5', 'Refunds: 2', 'Transactions: 7', 'Gross: $47.20', 'Refund total: $15.95' and 'Net: $31.25', and the By category block shows 'Drinks: $22.60', 'Food: $12.10' and 'Merch: $12.50'."

@@ -1,0 +1,58 @@
+# Device-test suite for s1-payroll-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1pr-final-e2e
+        platform: ios
+        tags:
+            - e2e
+    build:
+        name: bench-s1-payroll-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: "The Team tab lists 'Ava Torres', 'Ben Okafor', 'Chloe Nguyen' and 'Dev Patel' with '$22.50/h' and '6 shifts' on the 'Ava Torres' row."
+        - type: instructions
+          step_description: Tap the 'Ava Torres' row.
+        - type: validation
+          step_description: "The 'Ava Torres' timesheet Week block reads 'Regular 40.00h', 'Overtime 9.00h' and 'Gross $1203.75', while her 'Mon 07:00-16:30' shift row reads 'Reg 8.00h, OT 1.00h, Eve 0.00h'."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the Team roster.
+        - type: instructions
+          step_description: Tap the 'Payroll' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Payroll tab shows 'Total payroll $3203.43', 'Top earner Ava Torres $1203.75' and 'Overtime share 11.6%', with 'Chloe Nguyen $807.89' listed above 'Ben Okafor $798.51'."
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Settings tab shows 'Overtime x1.5', 'Evening +$3.00/h after 18:00' and 'Unpaid break 30 min over 6h', and a Week block reading 'Employees: 4', 'Shifts: 20', 'Paid hours: 143.08', 'Overtime hours: 11.50' and 'Evening hours: 15.92'."
+        - type: instructions
+          step_description: Tap the 'Team' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Dev Patel' row.
+        - type: validation
+          step_description: "The 'Dev Patel' timesheet shows 'Gross $393.28' in the Week block and the 'Thu 09:00-16:30' shift row reads 'Reg 7.00h, OT 0.00h, Eve 0.00h'."
+        - type: instructions
+          step_description: Tap the 'Thu 09:00-16:30' shift row.
+        - type: validation
+          step_description: "An 'Edit shift' screen shows 'Dev Patel', 'Thu 09:00-16:30' and a 'New end time' row with the buttons '18:00', '19:30' and '22:00'."
+        - type: instructions
+          step_description: In the 'New end time' row, tap the '19:30' button.
+        - type: validation
+          step_description: "The shift now reads 'Thu 09:00-19:30' and its daily line reads 'Reg 8.00h, OT 2.00h, Eve 1.50h'."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the 'Dev Patel' timesheet.
+        - type: validation
+          step_description: "The 'Dev Patel' Week block now reads 'Overtime 2.00h', 'Evening 1.50h' and 'Gross $461.78'."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the Team roster.
+        - type: instructions
+          step_description: Tap the 'Payroll' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Payroll tab now reads 'Total payroll $3271.93' and 'Overtime share 12.9%', 'Top earner Ava Torres $1203.75' is unchanged, and the Employees section shows 'Dev Patel $461.78'."
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Settings Week block now reads 'Paid hours: 146.08', 'Overtime hours: 13.50' and 'Evening hours: 17.42', with 'Shifts: 20' unchanged."

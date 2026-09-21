@@ -1,0 +1,60 @@
+# Device-test suite for s1-scheduler-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1sc-final-e2e
+        platform: ios
+        tags:
+            - e2e
+    build:
+        name: bench-s1-scheduler-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: "The Rooms tab lists five rooms named 'Aurora', 'Boardroom', 'Fern', 'Huddle' and 'Lumen', with 'Huddle' showing 'Seats 4' and 'Lumen' showing 'Seats 8' and '2 bookings'."
+        - type: instructions
+          step_description: Tap the 'Huddle' room row.
+        - type: validation
+          step_description: "The room detail for 'Huddle' shows 'Booked 125 min (20.8%)', a Schedule section listing '08:00-08:25 Standup (4)', '12:15-13:05 Coaching (2)' and '17:10-18:00 Wrap Up (3)', and an Availability section listing exactly two rows, '08:25-12:15 (230 min)' and '13:05-17:10 (245 min)', with no availability row starting at 08:00 and none ending at 18:00."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the room list.
+        - type: instructions
+          step_description: Tap the 'Book' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Lumen' room chip.
+        - type: instructions
+          step_description: "Tap the title input (the input showing the hint text 'Meeting title') and type: Team Sync"
+        - type: instructions
+          step_description: "Tap the start time input (the input showing the hint text 'Start (HH:MM)') and type: 10:00"
+        - type: instructions
+          step_description: "Tap the end time input (the input showing the hint text 'End (HH:MM)') and type: 11:00"
+        - type: instructions
+          step_description: "Tap the attendees input (the input showing the hint text 'Attendees') and type: 10"
+        - type: instructions
+          step_description: Tap the 'Request booking' button.
+        - type: validation
+          step_description: "The result line reads 'Rejected: 10 attendees exceeds capacity 8' and does not mention any overlap."
+        - type: instructions
+          step_description: "Tap the attendees input to clear it and type: 8"
+        - type: instructions
+          step_description: Tap the 'Request booking' button.
+        - type: validation
+          step_description: "The result line reads 'Rejected: overlaps Data Deep Dive (09:15-10:45)'."
+        - type: instructions
+          step_description: "Tap the start time input to clear it and type: 10:45"
+        - type: instructions
+          step_description: Tap the 'Request booking' button.
+        - type: validation
+          step_description: "The result line reads 'Booked Lumen 10:45-11:00 for 8'."
+        - type: instructions
+          step_description: Tap the 'Rooms' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Lumen' room row.
+        - type: validation
+          step_description: "The room detail for 'Lumen' shows 'Booked 175 min (29.2%)', the Schedule section lists '10:45-11:00 Team Sync (8)' between '09:15-10:45 Data Deep Dive (6)' and '13:30-14:40 Vendor Demo (8)', and the Availability section lists '08:00-09:15 (75 min)', '11:00-13:30 (150 min)' and '14:40-18:00 (200 min)' with no row reading '10:45-13:30'."
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Settings tab shows 'Rooms: 5', 'Bookings: 15', 'Booked: 950 min', 'Utilization: 31.7%' and the line 'Lumen: 175 min, 29.2%'."

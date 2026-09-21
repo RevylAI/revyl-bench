@@ -1,0 +1,365 @@
+# Contestant registry.
+#
+# A contestant = model × harness × config. `launch_rollout.py --contestant <slug>` indexes
+# into this file; the WHOLE entry is copied into rollout.json and into every attempts.jsonl
+# record, so a scored row stays self-describing even if this file changes later.
+#
+# Field semantics (what each one drives):
+#   short            → goes into rollout_id: <prefix>-<short>-s<seed>-<8hex>
+#   harness/model/…  → published metadata (leaderboard columns)
+#   harness_version  → EXACT npm version baked into the agent image. Two rollouts with the
+#                      same slug MUST run identical software; "latest" is forbidden here.
+#   key_env          → launch copies .env[key_env] into agent.env (the only model credential
+#                      the container ever sees)
+#   install          → RUN line in image/Dockerfile.agent (one image per harness × SDK,
+#                      tagged revyl-bench-agent:<harness>-sdk<NN>)
+#   invoke           → exec'd by container/entrypoint.sh in /workspace, after ${...}
+#                      substitution from this entry. RUNBOOK.md is the prompt.
+#   transcript       → glob (inside the agent's home) the runner copies at END for
+#                      token/turn accounting
+#
+# protocol_version is bumped on ANY change to caps / feedback contract / images / RUNBOOK
+# (everything a contestant experiences must be pinned and identical).
+# v2 (2026-08-20): RUNBOOK rewrite — "submission = final-exam attempt, not a progress
+# check" (the old "submit when a milestone is done" wording invited per-step checkpoint
+# submissions) + explicit "How your run is evaluated" incentive disclosure. Rows with
+# different protocol_version never aggregate (one season-1 exception: rows labelled "5 + 6" in
+# docs/season1-results.md join campaigns run under both); protocol-1 rollouts are preliminary data.
+# v3 (2026-08-25): revyl CLI pin v0.1.95 -> v0.1.96 via image/REVYL_CLI_VERSION (server
+# rejects <= 0.1.93); the six scaffolds that existed then had their .revyl/config.yaml moved to the canonical
+# project.id/session/build.framework shape (new base_commit for every task — the legacy
+# shape made every `revyl dev`/`device` call fail on CLI >= 0.1.95); RUNBOOK no longer
+# tells the agent `revyl device stop --all` (shared org) but `-s <index>`; entrypoint.sh
+# teardown is per-index too; grading runs `test run` without the submission tree as -C.
+# Protocol-2 rows (CLI 0.1.82/0.1.95, legacy configs) do not aggregate with these.
+# v4 (2026-08-26): submissions are built on Revyl remote build runners (`revyl build --remote`,
+# native prebuild + xcodebuild Release) instead of EAS. Contestant-
+# visible change: RUNBOOK's submission latency line (build ≈ 2–5 min, was 10–25). The six
+# scaffolds that existed then had their .revyl/config.yaml drop their placeholder build profile (new base_commit per
+# task; the grading recipe is image-owned and never part of the scaffold again).
+# v5 (2026-09-01): checkpoint.sh advertised in RUNBOOK — the agent must run
+# `./checkpoint.sh <n>` after completing each step. Unscored marker: no grading, no k
+# consumed, no feedback; it only tags the tree so every rollout leaves step-boundary
+# candidates instead of only the runs that happen to fail. Protocol-4 rows do not
+# aggregate with these.
+# v6 (2026-09-09): the Revyl CLI skills (revyl-cli-dev-loop, revyl-cli-create,
+# revyl-cli-atlas, revyl-cli-auth-bypass — the `revyl skill install` bundle) are installed
+# in the agent image for every harness (~/.claude/skills for Claude Code and opencode,
+# ~/.codex/skills for Codex) and the RUNBOOK says so. Before v6 no contestant had them.
+# results/official.jsonl records the protocol each published row ran under; a season-1 row
+# whose last three tasks were added after this change is labelled "5 + 6" there.
+# v7 (2026-09-15): resume instructions use the RUNBOOK's required test set instead
+# of demanding all four verdicts for every task. Step tasks may leave unrelated
+# slots null; these are not failed tests. Protocol-6 rows remain separately labeled.
+# v8: no entry was recorded in this changelog.
+# v9: deadline grading only when no explicit submission exists.
+protocol_version: 9
+
+contestants:
+  # This entry is written to stand alone (every comment a claude-code row needs is here), so
+  # the other claude-code entries can be added or removed without leaving a dangling reference.
+  claude-code/opus-5-high:              # added 2026-09-08
+    short: cc-opus5-hi
+    harness: claude-code
+    harness_version: "2.1.235"          # npm view @anthropic-ai/claude-code version; every claude-code entry pins the same one → one agent image
+    model: claude-opus-5
+    model_label: "Claude Opus 5"
+    provider: anthropic
+    reasoning: high
+    # The Claude Code credential: an Anthropic API key, in .env as ANTHROPIC_API_KEY. Claude
+    # Code reads that variable itself, so no `setup` step is needed. Alternative: set key_env
+    # to CLAUDE_CODE_OAUTH_TOKEN and put the output of `claude setup-token` in .env.
+    # Entries that share one credential share its rate limit.
+    key_env: ANTHROPIC_API_KEY
+    install: npm i -g @anthropic-ai/claude-code@${harness_version}
+    # -p = non-interactive print mode; the RUNBOOK is the whole prompt (task/ is on disk).
+    # --dangerously-skip-permissions is only honoured for a non-root user → image runs as `agent`.
+    invoke: claude -p "$(cat RUNBOOK.md)" --model ${model} --effort ${reasoning} --dangerously-skip-permissions --verbose
+    # re-invocation when the session ends while the rollout is live (entrypoint loop):
+    # --continue resumes the same conversation (state on the persisted /home/agent volume).
+    # single-quoted for YAML: the message contains ": " (after "RUNBOOK.md"), which is
+    # illegal inside an unquoted plain scalar — unquoted, yaml.safe_load rejects the file
+    # and BOTH launch_rollout.py and build_images.sh fail before doing anything.
+    invoke_resume: 'claude -p --continue "Your previous session ended but the rollout is still live. Read infra_runtime.json and the newest /mailbox/feedback/s*.verdict.json (+ its feedback bundle). Use RUNBOOK.md to identify the tests required for this task. If every required test has a PASS verdict with no regressions, you are done and may stop; null results for tests outside this task are not failures. Otherwise continue per RUNBOOK.md: diagnose from the failed criteria, fix, verify in the dev loop, and submit again within budget." --model ${model} --effort ${reasoning} --dangerously-skip-permissions --verbose'
+    transcript: /home/agent/.claude/projects/*/*.jsonl
+    notes: reads AGENTS.md/CLAUDE.md natively; its Bash tool caps a call at 10 min → submit.sh is async
+
+  opencode/glm-5.2:
+    short: oc-glm52
+    harness: opencode
+    harness_version: "1.18.18"          # one image per harness
+    model: opencode/glm-5.2             # the opencode GATEWAY route, not a direct provider
+    model_label: "GLM 5.2 (opencode gateway)"
+    provider: opencode-gateway
+    reasoning: default
+    # The gateway key, not a provider key: opencode brokers the model itself. Copied into
+    # agent.env by launch_rollout and turned into auth.json by `setup` below.
+    key_env: OPENCODE_API_KEY
+    install: npm i -g opencode-ai@${harness_version}
+    # opencode reads credentials from a FILE, not the environment, and prompts for every
+    # tool permission unless told otherwise — both must exist before `opencode run` or the
+    # agent stalls on an interactive prompt with no tty.
+    setup: |
+      mkdir -p "$HOME/.config/opencode" "$HOME/.local/share/opencode"
+      printf '%s' '{"permission":{"edit":"allow","bash":"allow","webfetch":"allow","external_directory":"allow"}}' > "$HOME/.config/opencode/opencode.json"
+      # launch_rollout wraps this body in `set -eu`, so a bare `[ -n ... ] && cmd` as the
+      # LAST line makes a missing key exit 1 with nothing but "setup.sh failed" — the same
+      # anonymous provisioning fault that reads as agent incompetence. Say what is missing.
+      if [ -z "${OPENCODE_API_KEY:-}" ]; then
+        echo "setup: OPENCODE_API_KEY is empty — registry key_env did not reach the container" >&2
+        exit 1
+      fi
+      python3 -c 'import json,os; json.dump({"opencode": {"type": "api", "key": os.environ["OPENCODE_API_KEY"]}}, open(os.path.expanduser("~/.local/share/opencode/auth.json"), "w"))'
+      chmod 600 "$HOME/.local/share/opencode/auth.json"
+    invoke: opencode run --model ${model} "$(cat RUNBOOK.md)"
+    # opencode resumes the most recent session with --continue (verified against
+    # `opencode run --help` before first use; if absent this falls back to a fresh run,
+    # which is correct but loses context).
+    invoke_resume: 'opencode run --continue --model ${model} "Your previous session ended but the rollout is still live. Read infra_runtime.json and the newest /mailbox/feedback/s*.verdict.json (+ its feedback bundle). Use RUNBOOK.md to identify the tests required for this task. If every required test has a PASS verdict with no regressions, you are done and may stop; null results for tests outside this task are not failures. Otherwise continue per RUNBOOK.md: diagnose from the failed criteria, fix, verify in the dev loop, and submit again within budget."'
+    # opencode >=1.x stores sessions in SQLite, not JSON — the old *.json glob
+    # matched only auth.json, so every opencode rollout's structured transcript
+    # (including glm reasoning, which IS persisted in the part table) went
+    # uncollected. Copy the db and its sidecars.
+    transcript: /home/agent/.local/share/opencode/opencode.db*
+    notes: gateway-brokered; credentials live in ~/.local/share/opencode/auth.json (see setup), not env
+
+  opencode/muse-spark-1.3:
+    short: oc-muse13
+    harness: opencode
+    harness_version: "1.18.18"          # same pin as glm-5.2 -> same agent image, no rebuild
+    model: opencode/muse-spark-1.3-contributor-free   # gateway route; the contributor (free) tier
+    model_label: "Muse Spark 1.3 (opencode gateway, contributor tier)"
+    provider: opencode-gateway
+    reasoning: default
+    key_env: OPENCODE_API_KEY
+    install: npm i -g opencode-ai@${harness_version}
+    # identical setup/invoke/transcript to opencode/glm-5.2: only the gateway route differs
+    setup: |
+      mkdir -p "$HOME/.config/opencode" "$HOME/.local/share/opencode"
+      printf '%s' '{"permission":{"edit":"allow","bash":"allow","webfetch":"allow","external_directory":"allow"}}' > "$HOME/.config/opencode/opencode.json"
+      if [ -z "${OPENCODE_API_KEY:-}" ]; then
+        echo "setup: OPENCODE_API_KEY is empty — registry key_env did not reach the container" >&2
+        exit 1
+      fi
+      python3 -c 'import json,os; json.dump({"opencode": {"type": "api", "key": os.environ["OPENCODE_API_KEY"]}}, open(os.path.expanduser("~/.local/share/opencode/auth.json"), "w"))'
+      chmod 600 "$HOME/.local/share/opencode/auth.json"
+    invoke: opencode run --model ${model} "$(cat RUNBOOK.md)"
+    invoke_resume: 'opencode run --continue --model ${model} "Your previous session ended but the rollout is still live. Read infra_runtime.json and the newest /mailbox/feedback/s*.verdict.json (+ its feedback bundle). Use RUNBOOK.md to identify the tests required for this task. If every required test has a PASS verdict with no regressions, you are done and may stop; null results for tests outside this task are not failures. Otherwise continue per RUNBOOK.md: diagnose from the failed criteria, fix, verify in the dev loop, and submit again within budget."'
+    transcript: /home/agent/.local/share/opencode/opencode.db*
+    notes: gateway-brokered like glm-5.2; added 2026-09-03 for a second whole-app benchmark row
+
+  # --- direct providers: opencode as the HARNESS only, inference bought from the vendor -------
+  # The two gateway entries above buy inference through opencode's own route (OPENCODE_API_KEY).
+  # A direct entry keeps the harness, version, RUNBOOK and image identical and points opencode
+  # at the vendor's OpenAI-compatible endpoint with your own key, the way the vllm entry below
+  # does. Copy the entry below to bring your own provider: change the provider id, `base_url`,
+  # `key_env` and the model id. A direct entry is a NEW slug on purpose: provider is part of a
+  # row's identity, so gateway rows and direct rows never aggregate. Same agent image (same
+  # harness_version): no rebake.
+  opencode/nemotron3-ultra-deepinfra:
+    short: oc-nemo3ud
+    harness: opencode
+    harness_version: "1.18.18"
+    # The largest released Nemotron 3 (550B total / 55B active, open weights) served by
+    # DeepInfra's OpenAI-compatible endpoint. limit.context is declared at 200k so opencode
+    # compacts long sessions the way it does on the gateway rows (the harness, not the model,
+    # is what must stay comparable), with output at 32k.
+    model: deepinfra/nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B
+    model_label: "Nemotron 3 Ultra 550B-A55B (DeepInfra, direct)"
+    provider: deepinfra
+    reasoning: default
+    key_env: DEEPINFRA_API_KEY
+    base_url: https://api.deepinfra.com/v1/openai
+    install: npm i -g opencode-ai@${harness_version}
+    setup: |
+      mkdir -p "$HOME/.config/opencode"
+      if [ -z "${DEEPINFRA_API_KEY:-}" ]; then
+        echo "setup: DEEPINFRA_API_KEY is empty — registry key_env did not reach the container" >&2
+        exit 1
+      fi
+      cat > "$HOME/.config/opencode/opencode.json" <<'JSON'
+      {
+        "$schema": "https://opencode.ai/config.json",
+        "permission": {"edit": "allow", "bash": "allow", "webfetch": "allow", "external_directory": "allow"},
+        "provider": {
+          "deepinfra": {
+            "npm": "@ai-sdk/openai-compatible",
+            "name": "DeepInfra (direct)",
+            "options": {"baseURL": "${base_url}", "apiKey": "{env:DEEPINFRA_API_KEY}"},
+            "models": {
+              "nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B": {
+                "name": "Nemotron 3 Ultra 550B-A55B",
+                "tool_call": true,
+                "reasoning": true,
+                "limit": {"context": 200000, "output": 32768}
+              }
+            }
+          }
+        }
+      }
+      JSON
+      python3 -c 'import json,os; json.load(open(os.path.expanduser("~/.config/opencode/opencode.json")))' \
+        || { echo "setup: opencode.json is not valid JSON" >&2; exit 1; }
+    invoke: opencode run --model ${model} "$(cat RUNBOOK.md)"
+    invoke_resume: 'opencode run --continue --model ${model} "Your previous session ended but the rollout is still live. Read infra_runtime.json and the newest /mailbox/feedback/s*.verdict.json (+ its feedback bundle). Use RUNBOOK.md to identify the tests required for this task. If every required test has a PASS verdict with no regressions, you are done and may stop; null results for tests outside this task are not failures. Otherwise continue per RUNBOOK.md: diagnose from the failed criteria, fix, verify in the dev loop, and submit again within budget."'
+    transcript: /home/agent/.local/share/opencode/opencode.db*
+    notes: added 2026-09-10; the route the published Nemotron 3 Ultra row ran on
+
+  opencode/nemotron3-nano:
+    short: oc-nemo3n
+    harness: opencode
+    harness_version: "1.18.18"          # SAME pin as glm-5.2 -> same agent image: no rebuild, no AMI rebake
+    # `vllm/nemotron` = opencode provider id `vllm` (declared in `setup` below) / served model id
+    # `nemotron` (the name your own vLLM server serves the weights under). Neither changes for
+    # a different checkpoint; the SERVER decides which weights sit behind the name.
+    model: vllm/nemotron
+    model_label: "Nemotron 3 Nano 30B-A3B (released post-trained checkpoint) via vLLM on Modal"
+    model_context_limit: 118784         # below the server's max_model_len on purpose; see `setup`
+    model_output_limit: 8192
+    compaction_prune: "true"            # opencode may prune old tool results
+    compaction_auto: "true"             # opencode may compact the session when it nears the context limit
+    # `vllm-modal` is the provider id recorded for the published row (its vLLM server ran on
+    # Modal). It is only a label that selects the VLLM_BASE_URL override in bench/config.py:
+    # any OpenAI-compatible vLLM server works, wherever it runs.
+    provider: vllm-modal
+    reasoning: default                  # thinking ON (the model's default)
+    # The bearer token your server (or the proxy in front of it) checks, copied into agent.env
+    # by launch_rollout. It is the ONLY secret. NOT the URL: the URL is not a secret and
+    # rides below.
+    key_env: VLLM_API_KEY
+    # A plain registry field, substituted into `setup` by config.render_setup (${base_url}) and
+    # copied into rollout.json + attempts.jsonl with the rest of the row, so a scored record says
+    # which server produced it. Any OpenAI-compatible URL works (http://localhost:8000/v1 for
+    # a server on the launch host); VLLM_BASE_URL in the environment overrides it.
+    base_url: https://<policy-endpoint>/v1
+    install: npm i -g opencode-ai@${harness_version}
+    # opencode reads its provider config from a FILE and prompts for every tool permission
+    # unless told otherwise; both must exist before `opencode run` or the agent stalls on an
+    # interactive prompt with no tty. Unlike glm-5.2 there is no auth.json: opencode's own
+    # `{env:VAR}` substitution reads the token from the environment at request time, so the
+    # secret never touches the agent-home volume.
+    setup: |
+      mkdir -p "$HOME/.config/opencode"
+      if [ -z "${VLLM_API_KEY:-}" ]; then
+        echo "setup: VLLM_API_KEY is empty — registry key_env did not reach the container" >&2
+        exit 1
+      fi
+      # single-quoted heredoc: nothing inside is expanded by this shell. ${base_url} was already
+      # replaced by render_setup when this script was rendered; {env:VLLM_API_KEY} is opencode's.
+      # The heredoc is JSON — no comments inside it (setup validates it with json.load).
+      # models.nemotron.limit: context is declared 12 288 tokens BELOW the server's 131 072
+      # max_model_len, and output at 8 192 (was 16 384). opencode compacts the session when the
+      # prompt nears limit.context; with the true ceiling declared it did so too late — a resume
+      # with a 114 689-token prompt plus a 16 384 output request was refused by vLLM ("maximum
+      # context length is 131072") on every retry, and the rollout ended on the infra stop.
+      # Headroom = one full output turn plus the request overhead.
+      cat > "$HOME/.config/opencode/opencode.json" <<'JSON'
+      {
+        "$schema": "https://opencode.ai/config.json",
+        "compaction": {"auto": ${compaction_auto}, "prune": ${compaction_prune}},
+        "permission": {"edit": "allow", "bash": "allow", "webfetch": "allow", "external_directory": "allow"},
+        "provider": {
+          "vllm": {
+            "npm": "@ai-sdk/openai-compatible",
+            "name": "vLLM (revyl-bench policy server)",
+            "options": {"baseURL": "${base_url}", "apiKey": "{env:VLLM_API_KEY}", "timeout": 600000},
+            "models": {
+              "nemotron": {
+                "name": "Nemotron 3 Nano 30B-A3B",
+                "tool_call": true,
+                "reasoning": true,
+                "limit": {"context": ${model_context_limit}, "output": ${model_output_limit}}
+              }
+            }
+          }
+        }
+      }
+      JSON
+      python3 -c 'import json,os; json.load(open(os.path.expanduser("~/.config/opencode/opencode.json")))' \
+        || { echo "setup: opencode.json is not valid JSON" >&2; exit 1; }
+    invoke: opencode run --model ${model} "$(cat RUNBOOK.md)"
+    invoke_resume: 'opencode run --continue --model ${model} "Your previous session ended but the rollout is still live. Read infra_runtime.json and the newest /mailbox/feedback/s*.verdict.json (+ its feedback bundle). Use RUNBOOK.md to identify the tests required for this task. If every required test has a PASS verdict with no regressions, you are done and may stop; null results for tests outside this task are not failures. Otherwise continue per RUNBOOK.md: diagnose from the failed criteria, fix, verify in the dev loop, and submit again within budget."'
+    transcript: /home/agent/.local/share/opencode/opencode.db*
+    notes: self-hosted vLLM. `base_url` is a PLACEHOLDER for your own OpenAI-compatible vLLM server — this row cannot run until you set it (here, or VLLM_BASE_URL in the environment) and put that server's token in runtime/.env as VLLM_API_KEY. Confirm the server answers a tool-calling request before the first rollout.
+
+  # ---------------------------------------------------------------------------------------
+  # Codex CLI (OpenAI's open-source coding agent) as a harness: OpenAI models on a
+  # ChatGPT-plan login (device-code OAuth; no API key).
+  #
+  # Codex runs non-interactively with `codex exec`; approvals and the sandbox are turned
+  # off inside the agent container (it already is the sandbox), `--skip-git-repo-check`
+  # because /workspace is not a trusted git checkout from Codex's point of view. Config
+  # (provider, model, effort) is written to $CODEX_HOME/config.toml by `setup`; Codex keeps
+  # its session transcript under $CODEX_HOME/sessions/YYYY/MM/DD/*.jsonl, which the runner
+  # collects. `codex exec resume --last` continues the most recent session. Flags verified
+  # against Codex 0.153 exec-mode behaviour (approval is downgraded to `never` in exec mode
+  # anyway; the bypass flag also lifts the sandbox).
+  codex/gpt-6-astra:
+    short: cx-astra
+    harness: codex
+    harness_version: "0.153.4"          # npm view @openai/codex version, 2026-09-06; one image per harness
+    model: gpt-6-astra                 # verified 2026-09-07: a one-word `codex exec` under the plan login answered
+    model_label: "GPT-6-Astra via Codex CLI"
+    provider: openai
+    reasoning: medium                  # config.toml below sets model_reasoning_effort = "medium"
+    # ChatGPT-plan OAuth, not an API key: `codex login` once (on a workstation with a browser,
+    # or `--device-auth` on a headless launch host) writes $CODEX_HOME/auth.json. Its JSON goes into
+    # runtime/.env as CODEX_AUTH_B64, base64 of the file on one line (a raw JSON value does
+    # not survive a KEY=VALUE line), and `setup` decodes it back. Treat it like a password.
+    # Plan rate limits apply: run at low width; a campaign at 16 lanes wants an
+    # organisation API key instead.
+    key_env: CODEX_AUTH_B64
+    install: npm i -g @openai/codex@${harness_version}
+    setup: |
+      export CODEX_HOME="$HOME/.codex"; mkdir -p "$CODEX_HOME"
+      if [ -z "${CODEX_AUTH_B64:-}" ]; then
+        echo "setup: CODEX_AUTH_B64 is empty — registry key_env did not reach the container" >&2
+        exit 1
+      fi
+      printf '%s' "$CODEX_AUTH_B64" | base64 -d > "$CODEX_HOME/auth.json"; chmod 600 "$CODEX_HOME/auth.json"
+      python3 -c 'import json,os; json.load(open(os.path.expanduser("~/.codex/auth.json")))' \
+        || { echo "setup: CODEX_AUTH_B64 does not decode to valid JSON" >&2; exit 1; }
+      cat > "$CODEX_HOME/config.toml" <<'TOML'
+      model_reasoning_effort = "medium"
+      approval_policy = "never"
+      sandbox_mode = "danger-full-access"
+      TOML
+    invoke: codex exec --skip-git-repo-check --dangerously-bypass-approvals-and-sandbox --model ${model} "$(cat RUNBOOK.md)"
+    invoke_resume: 'codex exec --skip-git-repo-check --dangerously-bypass-approvals-and-sandbox resume --last "Your previous session ended but the rollout is still live. Read infra_runtime.json and the newest /mailbox/feedback/s*.verdict.json (+ its feedback bundle). Use RUNBOOK.md to identify the tests required for this task. If every required test has a PASS verdict with no regressions, you are done and may stop; null results for tests outside this task are not failures. Otherwise continue per RUNBOOK.md: diagnose from the failed criteria, fix, verify in the dev loop, and submit again within budget."'
+    transcript: /home/agent/.codex/sessions/*/*/*/*.jsonl
+    notes: OpenAI model on a ChatGPT-plan login (shared with the other codex/gpt-* rows, so their campaigns share one rate-limit bucket); needs the codex agent image (provision/build_images.sh codex).
+
+  codex/gpt-5.6-terra:
+    short: cx-terra
+    harness: codex
+    harness_version: "0.153.4"          # same pin -> same agent image
+    model: gpt-5.6-terra                 # verified 2026-09-07: a one-word `codex exec` under the plan login answered
+    model_label: "GPT-5.6-Terra via Codex CLI"
+    provider: openai
+    reasoning: medium                  # config.toml below sets model_reasoning_effort = "medium"
+    # ChatGPT-plan OAuth, not an API key: `codex login` once (on a workstation with a browser,
+    # or `--device-auth` on a headless launch host) writes $CODEX_HOME/auth.json. Its JSON goes into
+    # runtime/.env as CODEX_AUTH_B64, base64 of the file on one line (a raw JSON value does
+    # not survive a KEY=VALUE line), and `setup` decodes it back. Treat it like a password.
+    # Plan rate limits apply: run at low width; a campaign at 16 lanes wants an
+    # organisation API key instead.
+    key_env: CODEX_AUTH_B64
+    install: npm i -g @openai/codex@${harness_version}
+    setup: |
+      export CODEX_HOME="$HOME/.codex"; mkdir -p "$CODEX_HOME"
+      if [ -z "${CODEX_AUTH_B64:-}" ]; then
+        echo "setup: CODEX_AUTH_B64 is empty — registry key_env did not reach the container" >&2
+        exit 1
+      fi
+      printf '%s' "$CODEX_AUTH_B64" | base64 -d > "$CODEX_HOME/auth.json"; chmod 600 "$CODEX_HOME/auth.json"
+      python3 -c 'import json,os; json.load(open(os.path.expanduser("~/.codex/auth.json")))' \
+        || { echo "setup: CODEX_AUTH_B64 does not decode to valid JSON" >&2; exit 1; }
+      cat > "$CODEX_HOME/config.toml" <<'TOML'
+      model_reasoning_effort = "medium"
+      approval_policy = "never"
+      sandbox_mode = "danger-full-access"
+      TOML
+    invoke: codex exec --skip-git-repo-check --dangerously-bypass-approvals-and-sandbox --model ${model} "$(cat RUNBOOK.md)"
+    invoke_resume: 'codex exec --skip-git-repo-check --dangerously-bypass-approvals-and-sandbox resume --last "Your previous session ended but the rollout is still live. Read infra_runtime.json and the newest /mailbox/feedback/s*.verdict.json (+ its feedback bundle). Use RUNBOOK.md to identify the tests required for this task. If every required test has a PASS verdict with no regressions, you are done and may stop; null results for tests outside this task are not failures. Otherwise continue per RUNBOOK.md: diagnose from the failed criteria, fix, verify in the dev loop, and submit again within budget."'
+    transcript: /home/agent/.codex/sessions/*/*/*/*.jsonl
+    notes: OpenAI model on a ChatGPT-plan login (shared with the other codex/gpt-* rows, so their campaigns share one rate-limit bucket); needs the codex agent image (provision/build_images.sh codex).

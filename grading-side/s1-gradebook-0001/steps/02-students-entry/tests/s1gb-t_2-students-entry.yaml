@@ -1,0 +1,44 @@
+# Device-test suite for s1-gradebook-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1gb-t_2-students-entry
+        platform: ios
+    build:
+        name: bench-s1-gradebook-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: The Students tab lists the six students in alphabetical order with 'Aisha 85.3 B' first and 'Ben 90.0 A' second.
+        - type: validation
+          step_description: The roster shows 'Diana 72.5 C' and 'Farah 75.1 C'.
+        - type: instructions
+          step_description: Tap the 'Ben' roster row.
+        - type: validation
+          step_description: "The student detail for 'Ben' shows 'Homework average: 85.0%', 'Quizzes average: 95.0%', 'Exams average: 89.0%', 'Overall grade: 90.0' and 'Letter grade: A'."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the roster.
+        - type: instructions
+          step_description: Tap the 'Ethan' roster row.
+        - type: validation
+          step_description: "The student detail for 'Ethan' shows 'HW2 not recorded', 'Homework average: 87.5%' and 'Overall grade: 85.3'."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the roster.
+        - type: instructions
+          step_description: Scroll down the Students tab until the 'Record a score' section is visible.
+        - type: instructions
+          step_description: In the 'Record a score' section, tap the 'Diana' button in the 'Student' row.
+        - type: instructions
+          step_description: Tap the 'Quiz 2' button in the 'Assessment' row.
+        - type: instructions
+          step_description: "Tap the score input and type: 38"
+        - type: instructions
+          step_description: Tap the 'Save' button.
+        - type: validation
+          step_description: The roster row for 'Diana' now reads 'Diana 80.0 B' where it read 'Diana 72.5 C' before.
+        - type: instructions
+          step_description: Tap the 'Diana' roster row.
+        - type: validation
+          step_description: "The student detail for 'Diana' shows 'Quiz 2 38/40', 'Quizzes average: 70.0%', 'Overall grade: 80.0' and 'Letter grade: B'."

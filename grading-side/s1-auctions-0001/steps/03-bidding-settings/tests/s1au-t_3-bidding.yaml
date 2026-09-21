@@ -1,0 +1,46 @@
+# Device-test suite for s1-auctions-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1au-t_3-bidding
+        platform: ios
+    build:
+        name: bench-s1-auctions-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: instructions
+          step_description: Tap the 'Private chef dinner' lot row.
+        - type: validation
+          step_description: "The lot screen is titled 'Private chef dinner' and its header block reads 'Standing bid $320.00', 'Omar Haddad is winning' and 'Next bid from $330.00'. An amount input showing the hint text '0.00' and a 'Place bid' button are pinned at the bottom."
+        - type: instructions
+          step_description: "Tap the amount input at the bottom (the input showing the hint text '0.00') and type: 325.00"
+        - type: instructions
+          step_description: Tap the 'Place bid' button.
+        - type: validation
+          step_description: "The text 'Minimum bid is $330.00' is shown near the composer, the header block still reads 'Standing bid $320.00' and 'Omar Haddad is winning', and the amount input is empty again."
+        - type: instructions
+          step_description: "Tap the amount input at the bottom (the input showing the hint text '0.00') and type: 600.00"
+        - type: instructions
+          step_description: Tap the 'Place bid' button.
+        - type: validation
+          step_description: "The header block now reads 'Standing bid $330.00', 'You are winning', 'below reserve' and 'Next bid from $340.00', and a new bid row reading 'You $330.00' is visible at the bottom of the Bids list without any further scrolling."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the lot list.
+        - type: validation
+          step_description: "The 'Private chef dinner' row now reads 'Standing bid $330.00' and 'below reserve', and the badge on the Lots tab item reads 3."
+        - type: instructions
+          step_description: Tap the 'My Bids' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The My Bids tab shows 'Private chef dinner' reading 'Your max $600.00', 'Standing bid $330.00' and 'winning'."
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Settings tab shows 'Reserve-met standing bids: $700.00' and 'Your exposure: $1000.00'."
+        - type: instructions
+          step_description: Tap the 'Lots' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Private chef dinner' lot row.
+        - type: validation
+          step_description: "The lot screen still reads 'Standing bid $330.00' and 'You are winning', and the Bids list still ends with 'You $330.00'."

@@ -1,0 +1,30 @@
+# Device-test suite for s1-team-chat-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1tc-t_2-channel-timeline
+        platform: ios
+    build:
+        name: bench-s1-team-chat-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: The Channels list shows five channels named '#general', '#engineering', '#design', '#random', and '#announcements', and the channels with unread messages ('#general', '#engineering', '#random', '#announcements') each show a small numeric unread badge next to the name.
+        - type: instructions
+          step_description: Tap the '#general' channel row.
+        - type: validation
+          step_description: 'The #general channel screen is open, showing a message timeline (including ''Morning all! Kicking off the sprint today.'' and ''Standup notes are in the shared doc.'') with a message composer text input pinned at the bottom.'
+        - type: instructions
+          step_description: 'Tap the message composer input at the bottom and type the text: @alex ship it'
+        - type: instructions
+          step_description: Tap the 'Send' button to the right of the message input.
+        - type: validation
+          step_description: A new message '@alex ship it' from 'You' now appears exactly once at the bottom of the timeline, and the '@alex' part is rendered as a visually distinct highlighted mention token (different colour/background from the surrounding text).
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the channel list.
+        - type: instructions
+          step_description: Tap the 'Mentions' tab in the bottom tab bar.
+        - type: validation
+          step_description: 'The Mentions tab lists messages that mention you: each row shows a highlighted ''@you'' token with the author and channel, for example ''Jordan Blake in #general'' and ''Alex Rivera in #engineering''.'

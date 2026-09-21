@@ -1,0 +1,46 @@
+# Device-test suite for s1-payroll-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1pr-t_2-timesheets-edit
+        platform: ios
+    build:
+        name: bench-s1-payroll-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: instructions
+          step_description: Tap the 'Ben Okafor' row on the Team tab.
+        - type: validation
+          step_description: "The 'Ben Okafor' timesheet shows a Week block reading 'Regular 39.25h', 'Overtime 2.50h', 'Evening 1.00h', 'Paid 41.75h' and 'Gross $798.51'."
+        - type: validation
+          step_description: "In the Shifts section the 'Mon 08:30-17:15' row reads 'Reg 8.00h, OT 0.25h, Eve 0.00h' and the 'Tue 08:30-19:00' row reads 'Reg 8.00h, OT 2.00h, Eve 1.00h'."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the Team roster.
+        - type: instructions
+          step_description: Tap the 'Ava Torres' row.
+        - type: validation
+          step_description: "The 'Ava Torres' timesheet shows a Week block reading 'Regular 40.00h', 'Overtime 9.00h' and 'Gross $1203.75', while her 'Mon 07:00-16:30' shift row reads 'Reg 8.00h, OT 1.00h, Eve 0.00h'."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the Team roster.
+        - type: instructions
+          step_description: Tap the 'Dev Patel' row.
+        - type: validation
+          step_description: "The 'Dev Patel' timesheet shows 'Regular 24.58h' and 'Gross $393.28' in the Week block, and the 'Thu 09:00-16:30' shift row reads 'Reg 7.00h, OT 0.00h, Eve 0.00h'."
+        - type: instructions
+          step_description: Tap the 'Thu 09:00-16:30' shift row.
+        - type: validation
+          step_description: "An 'Edit shift' screen has been pushed showing 'Dev Patel', the shift 'Thu 09:00-16:30', and a 'New end time' row with the three buttons '18:00', '19:30' and '22:00'."
+        - type: instructions
+          step_description: In the 'New end time' row, tap the '18:00' button.
+        - type: validation
+          step_description: "The shift now reads 'Thu 09:00-18:00' and its daily line reads 'Reg 8.00h, OT 0.50h, Eve 0.00h'."
+        - type: instructions
+          step_description: In the 'New end time' row, tap the '19:30' button.
+        - type: validation
+          step_description: "The shift now reads 'Thu 09:00-19:30' and its daily line reads 'Reg 8.00h, OT 2.00h, Eve 1.50h'."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the 'Dev Patel' timesheet.
+        - type: validation
+          step_description: "The 'Dev Patel' Week block now reads 'Regular 25.58h', 'Overtime 2.00h', 'Evening 1.50h' and 'Gross $461.78'."

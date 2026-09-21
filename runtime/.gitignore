@@ -1,0 +1,28 @@
+# This file is what keeps a deployment's keys out of its own commits.
+# The root .gitignore matches `.env` / `.env.*`,
+# which does NOT match hosts/<id>/runner.env or agent.env (the grading key, the agent key
+# and the model credential of a live rollout). `*.env` below does.
+# secrets — never committed
+.env
+*.env
+# campaigns (docs/campaigns.md): the artifact store is the runs bucket, the launch host
+# keeps the scoring inputs, and nothing under here is ever committed — legitimacy lives in
+# the status files and the manifests' histories, not in git
+campaigns/*
+# the live hosts' staging dirs (seeded scaffold, runner.env + agent.env, ec2.json): transient.
+# launch_rollout.py --dry-run leaves one behind on purpose, keys included.
+hosts/*
+# one deployment's AWS ids (account, VPC, bucket, AMI): the file you create from
+# host/ec2/infra.example.json. Not a secret, but it names your account, so it stays local.
+host/ec2/infra.json
+# flat run stores from before campaigns/ existed; still ignored in case a checkout has them
+runs/
+# scaffold node_modules / build outputs (scaffolds are committed WITHOUT deps)
+scaffolds/*/node_modules/
+scaffolds/*/.expo/
+scaffolds/*/build/
+scaffolds/*/ios/
+scaffolds/*/android/
+__pycache__/
+*.pyc
+/tmp/

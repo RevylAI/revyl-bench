@@ -1,0 +1,28 @@
+# Device-test suite for s1-bookings-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1bk-t_2-rooms-timeline
+        platform: ios
+    build:
+        name: bench-s1-bookings-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: "The Rooms list shows four rooms named 'Focus Pod', 'Huddle', 'Boardroom' and 'Open Desks'. 'Focus Pod' reads 'Seats 1', 'Today: 25% booked' and 'Next free: 11:00'; 'Huddle' reads 'Today: 38% booked' and 'Next free: 12:00'; 'Boardroom' reads 'Today: 38% booked' and 'Next free: 09:00'; 'Open Desks' reads 'Seats 3', 'Today: 29% booked' and 'Next free: 09:00'."
+        - type: instructions
+          step_description: Tap the 'Huddle' room row.
+        - type: validation
+          step_description: "The Huddle day screen is open with the subtitle 'Mon 6 Apr' and a timeline reading, in order, '09:00 to 11:00 Ben Okafor', '11:00 to 12:00 You', '11:00 to 12:30 Emma Lindqvist (waitlisted)' and '11:00 to 12:00 Dev Patel (waitlisted)'."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the room list.
+        - type: instructions
+          step_description: Tap the 'Bookings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Bookings tab shows the heading 'Bookings' and a list whose first row reads 'Focus Pod Mon 6 Apr 10:00 to 11:00' with the status 'confirmed', and a row reading 'Huddle Mon 6 Apr 14:00 to 15:00' with the status 'cancelled, Fee $10.00'."
+        - type: instructions
+          step_description: Scroll down the bookings list until the last booking is visible.
+        - type: validation
+          step_description: "The bottom of the Bookings list shows 'Open Desks Fri 10 Apr 09:00 to 10:00' with the status 'confirmed' followed by the last row 'Boardroom Fri 10 Apr 14:00 to 16:00' with the status 'confirmed'."

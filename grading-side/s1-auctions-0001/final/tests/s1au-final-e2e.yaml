@@ -1,0 +1,66 @@
+# Device-test suite for s1-auctions-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1au-final-e2e
+        platform: ios
+        tags:
+            - e2e
+    build:
+        name: bench-s1-auctions-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: "The Lots list begins with 'Vintage film camera' reading 'Closing order 1', 'Standing bid $110.00' and 'below reserve', and the Lots tab item in the bottom tab bar shows a numeric badge reading 4."
+        - type: instructions
+          step_description: Tap the 'Signed team jersey' lot row.
+        - type: validation
+          step_description: "The header block reads 'Standing bid $210.00', 'You are winning', 'reserve met' and 'Next bid from $220.00', and the Bids list begins with 'Dana Whitfield $45.50' and 'You $65.00'."
+        - type: instructions
+          step_description: Scroll down the Bids list until the last bid row is visible.
+        - type: validation
+          step_description: "The bottom of the Bids list shows 'You $190.00' followed by 'Dana Whitfield $210.00'."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the lot list.
+        - type: instructions
+          step_description: Tap the 'Private chef dinner' lot row.
+        - type: instructions
+          step_description: "Tap the amount input at the bottom (the input showing the hint text '0.00') and type: 600.00"
+        - type: instructions
+          step_description: Tap the 'Place bid' button.
+        - type: validation
+          step_description: "The header block reads 'Standing bid $330.00', 'You are winning', 'below reserve' and 'Next bid from $340.00', and a bid row reading 'You $330.00' is visible without any further scrolling."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the lot list.
+        - type: validation
+          step_description: "The 'Private chef dinner' row reads 'Standing bid $330.00', and the badge on the Lots tab item reads 3."
+        - type: instructions
+          step_description: Scroll down the lot list until the 'Season ski pass' lot row is visible.
+        - type: instructions
+          step_description: Tap the 'Season ski pass' lot row.
+        - type: validation
+          step_description: "The lot screen is titled 'Season ski pass' and its header block reads 'Standing bid $500.00', 'Lucia Ferreira is winning', 'below reserve' and 'Next bid from $525.00'."
+        - type: instructions
+          step_description: "Tap the amount input at the bottom (the input showing the hint text '0.00') and type: 700.00"
+        - type: instructions
+          step_description: Tap the 'Place bid' button.
+        - type: validation
+          step_description: "The header block now reads 'Standing bid $720.00', 'Lucia Ferreira is winning', 'reserve met' and 'Next bid from $745.00', and a bid row reading 'You $720.00' is visible."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the lot list.
+        - type: validation
+          step_description: "The badge on the Lots tab item now reads 4."
+        - type: instructions
+          step_description: Tap the 'My Bids' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The My Bids tab shows 'Private chef dinner' reading 'Your max $600.00', 'Standing bid $330.00' and 'winning'."
+        - type: instructions
+          step_description: Scroll down the My Bids list until the 'Season ski pass' row is visible.
+        - type: validation
+          step_description: "The My Bids row 'Season ski pass' reads 'Your max $700.00', 'Standing bid $720.00' and 'outbid'."
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Settings tab shows 'Reserve-met standing bids: $1420.00' and 'Your exposure: $1000.00'."

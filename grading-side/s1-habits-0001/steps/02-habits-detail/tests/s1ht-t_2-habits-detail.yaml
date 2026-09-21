@@ -1,0 +1,32 @@
+# Device-test suite for s1-habits-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1ht-t_2-habits-detail
+        platform: ios
+    build:
+        name: bench-s1-habits-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: "The Habits tab lists six habits in the order 'Morning run', 'Read 20 pages', 'Meditate', 'No sugar', 'Stretch', 'Journal'."
+        - type: validation
+          step_description: "The 'Morning run' row shows 'Current streak: 9', the 'Meditate' row shows 'Current streak: 0' and the 'No sugar' row shows 'Current streak: 23'."
+        - type: instructions
+          step_description: Tap the 'No sugar' habit row.
+        - type: validation
+          step_description: "The detail screen for 'No sugar' shows 'Current streak: 23', 'Longest streak: 23' and 'Completion: 100%'."
+        - type: instructions
+          step_description: Scroll down the Day log until the last day is visible.
+        - type: validation
+          step_description: "The bottom of the Day log shows 'Day 27: done' and 'Day 28: frozen'."
+        - type: validation
+          step_description: "With the Day log scrolled to the bottom, the habit name 'No sugar' and the line 'Current streak: 23' are still visible pinned at the top of the screen."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the habits list.
+        - type: instructions
+          step_description: Tap the 'Stretch' habit row.
+        - type: validation
+          step_description: "The detail screen for 'Stretch' shows 'Longest streak: 11' and 'Completion: 100%', its Day log begins with 'Day 1: not started', and days 19 to 21 read 'frozen'."

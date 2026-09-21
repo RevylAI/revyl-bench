@@ -1,0 +1,98 @@
+# Device-test suite for s1-bookings-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1bk-final-e2e
+        platform: ios
+        tags:
+            - e2e
+    build:
+        name: bench-s1-bookings-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: "The Rooms list shows 'Focus Pod' reading 'Today: 25% booked' and 'Next free: 11:00', and 'Huddle' reading 'Today: 38% booked' and 'Next free: 12:00'."
+        - type: instructions
+          step_description: Tap the 'Focus Pod' room row.
+        - type: instructions
+          step_description: "Tap the start input at the bottom (the input showing the hint text 'HH:MM') and type: 09:00"
+        - type: instructions
+          step_description: "Tap the length input at the bottom (the input showing the hint text 'Minutes') and type: 60"
+        - type: instructions
+          step_description: Tap the 'Book' button.
+        - type: validation
+          step_description: "A new timeline row '09:00 to 10:00 You (waitlisted)' is visible without any scrolling."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the room list.
+        - type: instructions
+          step_description: Tap the 'Boardroom' room row.
+        - type: instructions
+          step_description: "Tap the start input at the bottom (the input showing the hint text 'HH:MM') and type: 16:00"
+        - type: instructions
+          step_description: "Tap the length input at the bottom (the input showing the hint text 'Minutes') and type: 60"
+        - type: instructions
+          step_description: Tap the 'Book' button.
+        - type: validation
+          step_description: "A new timeline row '16:00 to 17:00 You' is visible without any scrolling, after '15:00 to 16:00 You'."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the room list.
+        - type: validation
+          step_description: "The 'Boardroom' row now reads 'Today: 50% booked' and 'Next free: 09:00', and the 'Focus Pod' row still reads 'Today: 25% booked'."
+        - type: instructions
+          step_description: Tap the 'Bookings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Bookings tab item shows a numeric badge reading 1; the first row reads 'Focus Pod Mon 6 Apr 09:00 to 10:00' with the status 'waitlisted', and a row reads 'Boardroom Mon 6 Apr 16:00 to 17:00' with the status 'confirmed'."
+        - type: instructions
+          step_description: Tap the row reading 'Huddle Mon 6 Apr 11:00 to 12:00'.
+        - type: validation
+          step_description: "The booking screen title reads 'Huddle Mon 6 Apr 11:00 to 12:00' and its status line reads 'confirmed', with a 'Cancel booking' button."
+        - type: instructions
+          step_description: Tap the 'Cancel booking' button.
+        - type: validation
+          step_description: "The status line now reads 'cancelled, Fee $10.00' and the 'Cancel booking' button is gone."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the Bookings list.
+        - type: instructions
+          step_description: Scroll down the bookings list until the row reading 'Boardroom Tue 7 Apr 09:00 to 10:00' is visible.
+        - type: instructions
+          step_description: Tap the row reading 'Boardroom Tue 7 Apr 09:00 to 10:00'.
+        - type: validation
+          step_description: "The booking screen title reads 'Boardroom Tue 7 Apr 09:00 to 10:00' and its status line reads 'confirmed', with a 'Cancel booking' button."
+        - type: instructions
+          step_description: Tap the 'Cancel booking' button.
+        - type: validation
+          step_description: "The status line now reads 'cancelled, Fee $22.50' and the 'Cancel booking' button is gone."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the Bookings list.
+        - type: instructions
+          step_description: Tap the row reading 'Focus Pod Tue 7 Apr 14:00 to 15:00'.
+        - type: validation
+          step_description: "The booking screen title reads 'Focus Pod Tue 7 Apr 14:00 to 15:00' and its status line reads 'confirmed', with a 'Cancel booking' button."
+        - type: instructions
+          step_description: Tap the 'Cancel booking' button.
+        - type: validation
+          step_description: "The status line now reads 'cancelled, No fee' and the 'Cancel booking' button is gone."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the Bookings list.
+        - type: instructions
+          step_description: Scroll down the Bookings list until the row reading 'Boardroom Tue 7 Apr 09:00 to 10:00' is visible.
+        - type: validation
+          step_description: "The row 'Boardroom Tue 7 Apr 09:00 to 10:00' reads 'cancelled, Fee $22.50' and the row 'Focus Pod Tue 7 Apr 14:00 to 15:00' reads 'cancelled, No fee'."
+        - type: instructions
+          step_description: Tap the 'Rooms' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The 'Huddle' row reads 'Today: 44% booked' and 'Next free: 12:30'."
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Settings tab shows 'Booked this week: 13h 30m' and 'Fees charged: $42.50'."
+        - type: instructions
+          step_description: Turn on the 'Hide cancelled' switch.
+        - type: instructions
+          step_description: Tap the 'Bookings' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Scroll to the top of the Bookings list.
+        - type: validation
+          step_description: "No row in the Bookings list reads 'cancelled', and the first row still reads 'Focus Pod Mon 6 Apr 09:00 to 10:00' with the status 'waitlisted'."

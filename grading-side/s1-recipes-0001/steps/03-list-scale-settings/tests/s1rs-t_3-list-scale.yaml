@@ -1,0 +1,44 @@
+# Device-test suite for s1-recipes-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1rs-t_3-list-scale
+        platform: ios
+    build:
+        name: bench-s1-recipes-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: instructions
+          step_description: Tap the 'List' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The List tab shows '4 recipes, 13 items' and the combined ingredients begin with 'Basil 10g', 'Cream 250ml' and 'Garlic 3'. There is no 'Butter' line — the pantry covers it."
+        - type: instructions
+          step_description: Scroll down the shopping list until the last item is visible.
+        - type: validation
+          step_description: "The bottom of the list shows 'Stock 650ml', 'Thyme 13g' and 'Tomatoes 400g'."
+        - type: validation
+          step_description: "After scrolling to the bottom of the list the 'Servings' row is still visible pinned at the top of the screen, and the List item in the bottom tab bar shows a numeric badge reading 13."
+        - type: instructions
+          step_description: In the 'Servings' row, tap the '3' button.
+        - type: validation
+          step_description: "A 'Butter 20g' line has appeared where there was none before, with 'Olive oil 45ml' and 'Parmesan 248g' also shown, and the List tab badge in the bottom tab bar now reads 14 where it read 13 before."
+        - type: instructions
+          step_description: Tap the 'Recipes' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Add to plan' control on the 'Tomato Soup' row.
+        - type: instructions
+          step_description: Tap the 'List' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The List tab badge in the bottom tab bar reads 14, and the list includes 'Olive oil 83ml' and 'Tomatoes 1500g'."
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Settings tab shows 'Recipes selected: 5' and 'Servings: 3', and a 'Pantry' block listing 'Basil 10g', 'Butter 100g', 'Garlic 5' and 'Olive oil 60ml'."
+        - type: instructions
+          step_description: Tap the 'List' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar again.
+        - type: validation
+          step_description: "The state persisted after navigating away and back: the Settings tab still shows 'Recipes selected: 5' and 'Servings: 3'."

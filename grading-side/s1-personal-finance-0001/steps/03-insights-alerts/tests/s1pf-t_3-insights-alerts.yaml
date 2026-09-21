@@ -1,0 +1,28 @@
+# Device-test suite for s1-personal-finance-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1pf-t_3-insights-alerts
+        platform: ios
+    build:
+        name: bench-s1-personal-finance-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: instructions
+          step_description: Tap the 'Insights' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Insights screen shows 'Top category: Rent' and a Weekly spending section with four rows reading Week of Jul 1 $2,135.00, Week of Jul 8 $185.00, Week of Jul 15 $265.00, and Week of Jul 22 $75.00."
+        - type: validation
+          step_description: "The Alert preferences section shows the summary text 'Weekly alert: Off'."
+        - type: instructions
+          step_description: Double-tap the 'Weekly spending alert' toggle row in the Alert preferences section.
+        - type: validation
+          step_description: "The 'Weekly spending alert' row shows 'On' with the row visually highlighted, and the summary text reads 'Weekly alert: On' - the double-tap did not bounce the setting back off."
+        - type: instructions
+          step_description: Tap the 'Accounts' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Insights' tab in the bottom tab bar.
+        - type: validation
+          step_description: "After navigating away and back, the Weekly spending alert still shows 'On' and the summary text still reads 'Weekly alert: On'."

@@ -1,0 +1,44 @@
+# Device-test suite for s1-kanban-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1kb-final-e2e
+        platform: ios
+        tags:
+            - e2e
+    build:
+        name: bench-s1-kanban-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: "The Board shows 'To Do' reading '4 tickets, 18 points', 'In Progress' reading '3 tickets, 16 points' and 'Done' reading '4 tickets, 11 points'."
+        - type: instructions
+          step_description: Tap the ticket row labelled '#105'.
+        - type: validation
+          step_description: "The ticket detail for '#105' shows 'Status: In Progress' and 'Points: 3'."
+        - type: instructions
+          step_description: In the 'Move to' section, tap the 'Done' button.
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the board.
+        - type: instructions
+          step_description: Scroll down on the Board to the very bottom, so the viewport is inside the 'Done' section and its last ticket rows are on screen.
+        - type: validation
+          step_description: "The 'In Progress' column reads '2 tickets, 13 points', the 'Done' column reads '5 tickets, 14 points', and '#105' is the second ticket listed in the 'Done' column."
+        - type: instructions
+          step_description: Tap the ticket row labelled '#101'.
+        - type: instructions
+          step_description: Tap the 'Assign to me' button.
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the board.
+        - type: validation
+          step_description: "The column headers are unchanged by the assignment, with 'To Do' still reading '4 tickets, 18 points'."
+        - type: instructions
+          step_description: Tap the 'My Work' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The My Work tab lists '#101' first, then '#102', '#105' and '#109'."
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Settings tab shows 'Total points: 45', 'Done points: 14' and 'Complete: 31%'."

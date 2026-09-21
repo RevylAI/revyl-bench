@@ -1,0 +1,22 @@
+# Device-test suite for s1-commerce-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1cm-t_2-grid-search-detail
+        platform: ios
+    build:
+        name: bench-s1-commerce-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: The Home tab shows a 'Search products' input and a grid of at least six product cards, each with a title and a price, including Cobalt Travel Mug $24, Linen Throw Blanket $58, and Cedar Pocket Notebook $9. The bottom tab bar shows Home, Cart, and Checkout.
+        - type: instructions
+          step_description: Type 'travel' into the 'Search products' input on the Home tab.
+        - type: validation
+          step_description: The product grid has narrowed to a single card, 'Cobalt Travel Mug' priced $24; no other product cards are visible.
+        - type: instructions
+          step_description: Tap the 'Cobalt Travel Mug' product card to open its detail screen.
+        - type: validation
+          step_description: The product detail screen shows the title 'Cobalt Travel Mug', the price '$24', the description 'Vacuum-sealed 16oz mug with a matte cobalt finish and a leak-resistant lid.', and a back control at the top-left.

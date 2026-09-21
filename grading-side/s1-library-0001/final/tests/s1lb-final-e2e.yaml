@@ -1,0 +1,58 @@
+# Device-test suite for s1-library-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1lb-final-e2e
+        platform: ios
+        tags:
+            - e2e
+    build:
+        name: bench-s1-library-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: The Catalog tab lists six titles with 'The Glass Harbor' showing '1 of 3 available' and 'Winter Arithmetic' showing '0 of 2 available'.
+        - type: instructions
+          step_description: Tap the 'Members' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The 'Marcus Webb' row shows 'Loans: 3 of 3' and the 'Priya Raman' row shows 'Loans: 1 of 2'."
+        - type: instructions
+          step_description: Tap the 'Loans' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The 'Out (9)' section is topped by 'A Field Guide to Nowhere', 'Priya Raman' with 'Overdue 12 days, fine $4.00'."
+        - type: instructions
+          step_description: Tap the 'Return' control on the 'A Field Guide to Nowhere' entry for 'Priya Raman'.
+        - type: instructions
+          step_description: Tap the 'Return' control on the 'The Glass Harbor' entry for 'Marcus Webb'.
+        - type: validation
+          step_description: The sections now read 'Out (7)' and 'Returned (10)'.
+        - type: instructions
+          step_description: Scroll down the loans list until the last returned entry is visible.
+        - type: validation
+          step_description: "The bottom of the 'Returned' section shows 'Returned Day 40, 12 days late, fine $4.00' for 'A Field Guide to Nowhere' and 'Returned Day 40, on time' for 'The Glass Harbor'."
+        - type: instructions
+          step_description: Tap the 'Members' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Theo Alvarez' member row.
+        - type: validation
+          step_description: "The member detail for 'Theo Alvarez' shows 'Loans out: 2 of 3' and a 'Check out' section including 'Salt and Circuit'."
+        - type: instructions
+          step_description: Tap the 'Check out' control for 'Salt and Circuit'.
+        - type: validation
+          step_description: "'Loans out' reads '3 of 3' and the text 'At loan limit: 3 of 3 books out. Return a book first.' has replaced the 'Check out' list."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the members list.
+        - type: instructions
+          step_description: Tap the 'Desk' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Desk tab shows 'Most overdue: Winter Arithmetic, 11 days' and 'Collection rate: 60.0%'."
+        - type: validation
+          step_description: "The Fines block reads 'Accruing on loans out: $9.80', 'Charged on returns: $12.55' and 'Total owed: $22.35'."
+        - type: validation
+          step_description: "The Availability block lists 'Salt and Circuit: 0 of 2' and 'The Glass Harbor: 2 of 3'."
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The 'Library' block shows 'Members: 5', 'Titles: 6', 'Copies: 14', 'Loans out: 8', 'Completed loans: 10' and 'Total owed: $22.35'."

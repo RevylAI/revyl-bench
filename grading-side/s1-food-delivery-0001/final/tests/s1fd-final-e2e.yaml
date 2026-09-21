@@ -1,0 +1,60 @@
+# Device-test suite for s1-food-delivery-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1fd-final-e2e
+        platform: ios
+    build:
+        name: bench-s1-food-delivery-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: "The app has launched and the Restaurants tab is showing a grid of six restaurant cards: Nonna Lucia, Pasta Vesuvio, Casa Verde, Taqueria del Sol, Hanako Ramen, and Sakura Sushi Bar."
+        - type: instructions
+          step_description: Tap the cuisine filter input and type 'ital'.
+        - type: validation
+          step_description: The restaurant grid is filtered to show only Nonna Lucia and Pasta Vesuvio.
+        - type: instructions
+          step_description: Tap the 'Nonna Lucia' restaurant card.
+        - type: instructions
+          step_description: Tap the 'Add to cart' button on the 'Margherita Pizza' row.
+        - type: validation
+          step_description: The button on the 'Margherita Pizza' row now reads 'In cart (1)'.
+        - type: instructions
+          step_description: Tap the back control at the top-left of the header to return to the Restaurants grid.
+        - type: instructions
+          step_description: Tap the cuisine filter input and delete all existing text from it.
+        - type: validation
+          step_description: The cuisine filter input is empty and all six restaurant cards are shown.
+        - type: instructions
+          step_description: Type 'mex' into the cuisine filter input.
+        - type: instructions
+          step_description: Tap the 'Casa Verde' restaurant card.
+        - type: instructions
+          step_description: Tap the 'Add to cart' button on the 'Carnitas Tacos (3)' row. A confirmation dialog will appear; do not tap any button on it yet.
+        - type: validation
+          step_description: A confirmation dialog titled 'Clear cart and add this item?' is showing, its message mentions that the cart has items from Nonna Lucia, and it has two buttons, 'Cancel' and 'Clear & add'.
+        - type: instructions
+          step_description: Tap the 'Cancel' button on the confirmation dialog.
+        - type: instructions
+          step_description: Tap the back control at the top-left of the header to return to the Restaurants grid.
+        - type: instructions
+          step_description: Tap the 'Cart' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Cart screen shows exactly one row, 'Margherita Pizza' with quantity 1, and the Subtotal reads $14.99 — no Casa Verde item was added."
+        - type: instructions
+          step_description: Tap the '+' (increment) button on the 'Margherita Pizza' cart row once.
+        - type: validation
+          step_description: "The 'Margherita Pizza' row now shows quantity 2 and the Subtotal reads $29.98."
+        - type: instructions
+          step_description: Tap the 'Checkout' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Checkout screen shows the lines Subtotal $29.98, Delivery fee $3.99, Tax (8%) $2.40, and Total $36.37, and a Deliver to address picker with Home, Work, and Other."
+        - type: instructions
+          step_description: Tap the 'Home' address option in the address picker.
+        - type: instructions
+          step_description: Tap the 'Place order' button.
+        - type: validation
+          step_description: "The order confirmation screen is showing 'Order placed', the order ID 'ORDER-000001', 'Arriving in ~28 min', and 'from Nonna Lucia'."

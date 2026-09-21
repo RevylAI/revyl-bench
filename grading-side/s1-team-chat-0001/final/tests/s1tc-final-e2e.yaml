@@ -1,0 +1,52 @@
+# Device-test suite for s1-team-chat-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1tc-final-e2e
+        platform: ios
+        tags:
+            - e2e
+    build:
+        name: bench-s1-team-chat-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: instructions
+          step_description: Tap the '#general' channel row.
+        - type: instructions
+          step_description: 'Tap the message composer input at the bottom and type the text: @sam deploy is green'
+        - type: instructions
+          step_description: Tap the 'Send' button to the right of the message input.
+        - type: validation
+          step_description: The message '@sam deploy is green' appears once at the bottom of the timeline from 'You', with '@sam' rendered as a visually distinct highlighted mention token.
+        - type: instructions
+          step_description: Tap the message from Sam Chen that reads 'Standup notes are in the shared doc.' to open its thread.
+        - type: instructions
+          step_description: 'Tap the reply input at the bottom (the input showing the hint text ''Reply in thread'') and type: shipping now'
+        - type: instructions
+          step_description: Tap the 'Reply' button to post the reply.
+        - type: validation
+          step_description: The reply 'shipping now' now appears in the thread and the reply count has increased to '2 replies'.
+        - type: instructions
+          step_description: Tap the back button at the top-left to leave the thread.
+        - type: instructions
+          step_description: Tap the back button at the top-left again to return to the channel list.
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Turn on the mute switch on the '#design' row.
+        - type: instructions
+          step_description: Turn on the 'Mention-only' switch.
+        - type: validation
+          step_description: 'The settings summary shows ''Muted: #design'' and ''Mention-only: On''.'
+        - type: instructions
+          step_description: Tap the 'Channels' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar again.
+        - type: validation
+          step_description: 'The settings persisted after navigating away and back: the summary still shows ''Muted: #design'' and ''Mention-only: On''.'
+        - type: instructions
+          step_description: Tap the 'Mentions' tab in the bottom tab bar.
+        - type: validation
+          step_description: 'The Mentions tab lists messages that mention you, each showing a highlighted ''@you'' token with its author and channel (for example ''Jordan Blake in #general'').'

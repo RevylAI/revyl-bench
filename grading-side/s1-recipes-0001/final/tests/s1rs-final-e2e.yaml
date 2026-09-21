@@ -1,0 +1,48 @@
+# Device-test suite for s1-recipes-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1rs-final-e2e
+        platform: ios
+        tags:
+            - e2e
+    build:
+        name: bench-s1-recipes-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: "The Recipes tab lists eight recipes with 'Tomato Pasta', 'Garlic Bread', 'Potato Gratin' and 'Mushroom Risotto' showing 'Selected'."
+        - type: instructions
+          step_description: Tap the 'List' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The List tab shows '4 recipes, 13 items' with 'Basil 10g', 'Garlic 3' and 'Parmesan 165g', and no 'Butter' line."
+        - type: instructions
+          step_description: Scroll down the shopping list until the last item is visible.
+        - type: validation
+          step_description: "The bottom of the list shows 'Thyme 13g' and 'Tomatoes 400g'."
+        - type: instructions
+          step_description: In the 'Servings' row, tap the '3' button.
+        - type: validation
+          step_description: "The list has rescaled: 'Olive oil 45ml' and 'Parmesan 248g' are shown, a 'Butter 20g' line has appeared, and the List tab badge reads 14."
+        - type: instructions
+          step_description: Tap the 'Recipes' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Tomato Soup' recipe row.
+        - type: validation
+          step_description: "The recipe detail for 'Tomato Soup' shows 'Serves 2' and 'Tomatoes 600g'."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the recipe list.
+        - type: instructions
+          step_description: Tap the 'Add to plan' control on the 'Tomato Soup' row.
+        - type: instructions
+          step_description: Tap the 'List' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Scroll down the shopping list until the last item is visible.
+        - type: validation
+          step_description: "The List tab badge in the bottom tab bar reads 14, and the bottom of the list shows 'Stock 1575ml', 'Thyme 20g' and 'Tomatoes 1500g'."
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Settings tab shows 'Recipes selected: 5' and 'Servings: 3', and a 'Pantry' block listing 'Basil 10g', 'Butter 100g', 'Garlic 5' and 'Olive oil 60ml'."

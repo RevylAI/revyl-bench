@@ -1,0 +1,26 @@
+# Device-test suite for s1-health-fitness-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1hf-t_2-log-history
+        platform: ios
+    build:
+        name: bench-s1-health-fitness-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "5"
+        - type: validation
+          step_description: Verify the app launched without a red screen and the Log screen shows the exercise list with Running, Cycling, Swimming, Yoga, and Strength.
+        - type: instructions
+          step_description: Tap on the 'Cycling' exercise option in the Log screen.
+        - type: validation
+          step_description: Verify the Cycling exercise is selected and the Duration minutes field shows '45' and the Calories burned field shows '400'.
+        - type: instructions
+          step_description: Tap the 'Save workout' button.
+        - type: instructions
+          step_description: Tap the 'Save workout' button again immediately to test the debounce.
+        - type: instructions
+          step_description: Tap on the 'History' tab in the bottom tab bar.
+        - type: validation
+          step_description: Verify the History screen shows a new entry under 'Jul 18' as 'Cycling — 45 min, 400 cal' and only one such Cycling entry exists.

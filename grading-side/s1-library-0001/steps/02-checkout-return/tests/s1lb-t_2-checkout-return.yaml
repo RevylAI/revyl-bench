@@ -1,0 +1,42 @@
+# Device-test suite for s1-library-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1lb-t_2-checkout-return
+        platform: ios
+    build:
+        name: bench-s1-library-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: instructions
+          step_description: Tap the 'Loans' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Loans tab shows a section headed 'Out (9)' whose top entry is 'A Field Guide to Nowhere', 'Priya Raman' with 'Overdue 12 days, fine $4.00', and the 'Winter Arithmetic' entry for 'Elif Kaya' reads 'Overdue 11 days, fine $3.85'."
+        - type: instructions
+          step_description: Tap the 'Members' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The 'Marcus Webb' row shows 'Loans: 3 of 3' and 'Fines owed: $2.80', and the 'Priya Raman' row shows 'Loans: 1 of 2' and 'Fines owed: $8.00'."
+        - type: instructions
+          step_description: Tap the 'Marcus Webb' member row.
+        - type: validation
+          step_description: "The member detail for 'Marcus Webb' shows 'Loans out: 3 of 3' and the text 'At loan limit: 3 of 3 books out. Return a book first.', with no 'Check out' controls."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the members list.
+        - type: instructions
+          step_description: Tap the 'Loans' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Return' control on the 'A Field Guide to Nowhere' entry for 'Priya Raman'.
+        - type: validation
+          step_description: "The 'Out' section is now headed 'Out (8)' with 'Winter Arithmetic', 'Elif Kaya' as its top entry, and the 'Returned' section is headed 'Returned (9)'."
+        - type: instructions
+          step_description: Tap the 'Members' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Theo Alvarez' member row.
+        - type: validation
+          step_description: "The member detail for 'Theo Alvarez' shows 'Loans out: 2 of 3' and a 'Check out' section listing 'The Glass Harbor' and 'Salt and Circuit'."
+        - type: instructions
+          step_description: Tap the 'Check out' control for 'Salt and Circuit'.
+        - type: validation
+          step_description: "The 'Books out' section now includes 'Salt and Circuit, due Day 54' with 'Not overdue', 'Loans out' reads '3 of 3', and the text 'At loan limit: 3 of 3 books out. Return a book first.' has replaced the 'Check out' list."

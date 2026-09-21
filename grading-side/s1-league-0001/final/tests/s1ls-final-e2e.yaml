@@ -1,0 +1,50 @@
+# Device-test suite for s1-league-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1ls-final-e2e
+        platform: ios
+        tags:
+            - e2e
+    build:
+        name: bench-s1-league-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: "The Table lists 'Brightwell' first with the values 4 3 0 1 8 6 2 9."
+        - type: instructions
+          step_description: Scroll down the table until the last team row is visible.
+        - type: validation
+          step_description: "The bottom of the table shows 'Dunmore' last with the values 4 0 2 2 4 9 -5 2."
+        - type: instructions
+          step_description: Tap the 'Eastvale' team row.
+        - type: validation
+          step_description: "The team detail for 'Eastvale' shows 'Goals for: 6', 'Goal difference: -1' and 'Points: 3'."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the table.
+        - type: instructions
+          step_description: Tap the 'Fixtures' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Scroll down to the 'Record a result' section.
+        - type: instructions
+          step_description: In the 'Record a result' section, tap the 'Calder' button in the 'Home' row.
+        - type: instructions
+          step_description: Tap the 'Ashford' button in the 'Away' row.
+        - type: instructions
+          step_description: "Tap the home score input and type: 3"
+        - type: instructions
+          step_description: "Tap the away score input and type: 0"
+        - type: instructions
+          step_description: Tap the 'Record' button.
+        - type: instructions
+          step_description: Tap the 'Table' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The 'Calder' row is visible without any further scrolling after recording."
+        - type: validation
+          step_description: "The table order is now 'Brightwell', 'Holloway', 'Fenwick', 'Calder', 'Garrick' from the top, with the 'Calder' row showing 5 2 1 2 10 9 1 7."
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Settings tab shows 'Matches played: 21' and 'Goals scored: 73'."

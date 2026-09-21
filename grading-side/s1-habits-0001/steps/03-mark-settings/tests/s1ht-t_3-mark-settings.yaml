@@ -1,0 +1,44 @@
+# Device-test suite for s1-habits-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1ht-t_3-mark-settings
+        platform: ios
+    build:
+        name: bench-s1-habits-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Settings tab shows 'Habits tracked: 6', 'Done today: 4' and 'Longest streak overall: 23'."
+        - type: instructions
+          step_description: Tap the 'Today' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Today tab lists the six habits, with the 'No sugar' row showing a control labelled 'Mark done' and the 'Morning run' row showing a control labelled 'Done today'."
+        - type: instructions
+          step_description: In the 'No sugar' row, tap the control labelled 'Mark done'.
+        - type: validation
+          step_description: "The 'No sugar' row now shows a control labelled 'Done today'."
+        - type: instructions
+          step_description: Tap the 'Habits' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The 'No sugar' row now shows 'Current streak: 24', where it read 'Current streak: 23' before the habit was marked."
+        - type: instructions
+          step_description: Tap the 'No sugar' habit row.
+        - type: validation
+          step_description: "The detail screen for 'No sugar' now shows 'Longest streak: 24' and 'Completion: 100%'."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the habits list.
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Settings tab now shows 'Done today: 5' and 'Longest streak overall: 24'."
+        - type: instructions
+          step_description: Tap the 'Habits' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar again.
+        - type: validation
+          step_description: "The state persisted after navigating away and back: the Settings tab still shows 'Done today: 5' and 'Longest streak overall: 24'."

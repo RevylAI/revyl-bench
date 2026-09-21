@@ -1,0 +1,54 @@
+# Device-test suite for s1-ride-booking-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1rb-final-e2e
+        platform: ios
+    build:
+        name: bench-s1-ride-booking-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: The app has launched and the Search tab is showing a list of destinations including Downtown Office, Airport Terminal, and Riverside Park.
+        - type: instructions
+          step_description: Tap the 'Downtown Office' destination row.
+        - type: validation
+          step_description: "The map labels area shows 'Pickup: Current Location' and 'Dropoff: Downtown Office'."
+        - type: instructions
+          step_description: Tap the 'Fare' tab in the bottom tab bar.
+        - type: validation
+          step_description: The Fare tab shows three fare cards including Economy $12.50 — ETA 5 min and Premium $24.00 — ETA 3 min.
+        - type: instructions
+          step_description: Tap the 'Economy' fare card.
+        - type: validation
+          step_description: "The selected fare summary reads 'Economy: $12.50 — ETA 5 min'."
+        - type: instructions
+          step_description: Tap the 'Premium' fare card.
+        - type: validation
+          step_description: "The selected fare summary now reads 'Premium: $24.00 — ETA 3 min', confirming the fare cascade."
+        - type: instructions
+          step_description: Tap the 'Trip' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Confirm ride' button.
+        - type: validation
+          step_description: "The screen shows 'Ride ID: WSH-1423', 'Driver: Sarah — Toyota Camry', and 'Status: Matching'."
+        - type: instructions
+          step_description: Tap the 'Advance status' button.
+        - type: instructions
+          step_description: Tap the 'Advance status' button.
+        - type: instructions
+          step_description: Tap the 'Advance status' button.
+        - type: validation
+          step_description: "The status shows 'Status: Arriving' and the Advance button is disabled showing 'Arrived'."
+        - type: instructions
+          step_description: Tap the 'Premium' option in the Preferred fare tier section.
+        - type: validation
+          step_description: "The summary text reads 'Preferred fare: Premium'."
+        - type: instructions
+          step_description: Tap the 'Search' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Trip' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The preferred fare summary still reads 'Preferred fare: Premium' and the ride still shows 'Status: Arriving' with 'Ride ID: WSH-1423' — both survived navigation."

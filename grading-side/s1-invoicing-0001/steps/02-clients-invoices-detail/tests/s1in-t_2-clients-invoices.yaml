@@ -1,0 +1,48 @@
+# Device-test suite for s1-invoicing-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1in-t_2-clients-invoices
+        platform: ios
+    build:
+        name: bench-s1-invoicing-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: "The Clients list shows five clients: 'Harbor Books' reading 'Outstanding $1,361.83' and '2 overdue', 'Northwind Studio' reading 'Outstanding $2,488.14' and '1 overdue', 'Pinecrest Dental' reading 'Outstanding $2,155.29' and '0 overdue', 'Lumen Analytics' reading 'Outstanding $3,480.92' and '1 overdue', and 'Solstice Cafe' reading 'Outstanding $1,179.24' and '1 overdue'."
+        - type: instructions
+          step_description: Tap the 'Invoices' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Invoices tab shows a filter row with 'All', 'Unpaid', 'Overdue', 'Paid' and 'Drafts' at the top, the Invoices tab item in the bottom tab bar shows a numeric badge reading 5, and the list begins with 'INV-1001' reading 'Harbor Books', 'Overdue' and $1,830.60."
+        - type: instructions
+          step_description: Scroll down the invoice list until the last invoice is visible.
+        - type: validation
+          step_description: "The bottom of the list shows 'INV-1014' reading 'Pinecrest Dental', 'Sent' and $930.37, and the filter row with 'All', 'Unpaid', 'Overdue', 'Paid' and 'Drafts' is still visible at the top of the screen."
+        - type: instructions
+          step_description: Tap 'Overdue' in the filter row at the top.
+        - type: validation
+          step_description: "The list now shows exactly five invoices, 'INV-1001', 'INV-1002', 'INV-1004', 'INV-1005' and 'INV-1006', each reading 'Overdue', and no row for 'INV-1003'."
+        - type: instructions
+          step_description: Tap the 'INV-1004' row.
+        - type: validation
+          step_description: "An invoice screen titled 'INV-1004' is shown for 'Lumen Analytics' reading 'Overdue', with the lines 'Dashboard mockups' at $1,500.00, 'Icon set' at $300.30 and 'Usability review' at $1,230.30."
+        - type: instructions
+          step_description: Scroll down the invoice screen until the totals are visible.
+        - type: validation
+          step_description: "The totals read 'Subtotal $3,030.60', 'Discount (15%) $454.60', 'Tax $198.93', 'Total $2,774.93', 'Paid $0.00' and 'Balance due $2,774.93'."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the invoice list.
+        - type: validation
+          step_description: "The invoice list is shown with 'Overdue' still selected in the filter row and 'INV-1004' still listed."
+        - type: instructions
+          step_description: Tap 'Paid' in the filter row at the top.
+        - type: validation
+          step_description: "The list now shows exactly two invoices, 'INV-1003' and 'INV-1007', each reading 'Paid'."
+        - type: instructions
+          step_description: Tap the 'INV-1003' row.
+        - type: instructions
+          step_description: Scroll down the invoice screen until the totals are visible.
+        - type: validation
+          step_description: "The invoice screen titled 'INV-1003' reads 'Total $1,485.95', 'Paid $1,500.00' and 'Credit $14.05'."

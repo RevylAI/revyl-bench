@@ -1,0 +1,30 @@
+# Device-test suite for s1-recipes-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1rs-t_2-recipes-select
+        platform: ios
+    build:
+        name: bench-s1-recipes-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: "The Recipes tab lists eight recipes including 'Tomato Pasta', 'Chicken Risotto', 'Garlic Bread', 'Potato Gratin' and 'Mushroom Risotto', with 'Tomato Pasta', 'Garlic Bread', 'Potato Gratin' and 'Mushroom Risotto' showing 'Selected'."
+        - type: instructions
+          step_description: Tap the 'Tomato Pasta' recipe row.
+        - type: validation
+          step_description: "The recipe detail for 'Tomato Pasta' shows 'Serves 2' and an Ingredients section listing 'Basil 15g', 'Garlic 2', 'Olive oil 25ml', 'Parmesan 45g', 'Pasta 200g' and 'Tomatoes 400g' in that order."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the recipe list.
+        - type: instructions
+          step_description: Tap the 'Tomato Soup' recipe row.
+        - type: validation
+          step_description: "The recipe detail for 'Tomato Soup' shows 'Serves 2' and includes 'Onion 2', 'Stock 400ml' and 'Tomatoes 600g'."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the recipe list.
+        - type: instructions
+          step_description: Tap the 'Add to plan' control on the 'Tomato Soup' row.
+        - type: validation
+          step_description: "The 'Tomato Soup' row now shows 'Selected'."

@@ -1,0 +1,8 @@
+# What the launch host needs to run runtime/ (launch_rollout.py, campaign.py, score/,
+# provision/setup_orgs.py). Everything else those scripts import is the standard library of
+# Python >= 3.11 (tomllib is why 3.11). The agent and runner containers install their own
+# dependencies from image/Dockerfile.*; this file is not used inside them.
+#
+# PyYAML: bench/config.py reads contestants/registry.yaml with it, and
+# provision/provision_grading.py reads and rewrites the suite YAMLs in grading-side/.
+PyYAML>=6.0

@@ -1,0 +1,34 @@
+# Device-test suite for s1-auctions-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1au-t_2-lots-detail
+        platform: ios
+    build:
+        name: bench-s1-auctions-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: "The Lots list begins with 'Vintage film camera' reading 'Closing order 1', 'Standing bid $110.00' and 'below reserve', followed by 'Signed team jersey' reading 'Closing order 2', 'Standing bid $210.00' and 'reserve met', and the Lots tab item in the bottom tab bar shows a numeric badge reading 4."
+        - type: instructions
+          step_description: Scroll down the lot list until the last lot is visible.
+        - type: validation
+          step_description: "The bottom of the Lots list shows 'Charity gala table' reading 'Closing order 11', 'Starting at $800.00' and 'no bids'."
+        - type: instructions
+          step_description: Scroll back up to the top of the lot list.
+        - type: instructions
+          step_description: Tap the 'Signed team jersey' lot row.
+        - type: validation
+          step_description: "The lot screen is titled 'Signed team jersey' and its header block reads 'Standing bid $210.00', 'You are winning', 'reserve met' and 'Next bid from $220.00'. A Bids section begins with rows reading 'Dana Whitfield $45.50', 'You $65.00' and 'Ken Tanaka $85.00'."
+        - type: instructions
+          step_description: Scroll down the Bids list until the last bid row is visible.
+        - type: validation
+          step_description: "The bottom of the Bids list shows 'You $190.00' followed by 'Dana Whitfield $210.00', and the header block reading 'Standing bid $210.00' is still visible at the top of the screen."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the lot list.
+        - type: instructions
+          step_description: Tap the 'My Bids' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The My Bids tab shows 'Vintage film camera' reading 'Your max $95.00', 'Standing bid $110.00' and 'outbid'; 'Private chef dinner' reading 'Your max $320.00', 'Standing bid $320.00' and 'outbid'; and 'Landscape painting' reading 'Your max $260.00', 'Standing bid $210.00' and 'winning'."

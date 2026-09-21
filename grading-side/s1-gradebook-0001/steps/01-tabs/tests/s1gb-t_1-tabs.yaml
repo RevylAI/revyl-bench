@@ -1,0 +1,28 @@
+# Device-test suite for s1-gradebook-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1gb-t_1-tabs
+        platform: ios
+    build:
+        name: bench-s1-gradebook-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: The app has launched without a red screen or runtime error dialog, and a bottom tab bar shows Students, Class, and Settings tabs.
+        - type: validation
+          step_description: The Students tab lists six students including the names 'Aisha', 'Ben', 'Chloe', 'Diana', 'Ethan' and 'Farah'.
+        - type: instructions
+          step_description: Tap the 'Class' tab in the bottom tab bar.
+        - type: validation
+          step_description: The Class tab is selected and the screen shows the heading 'Class' without any crash or error.
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: The Settings tab is selected and the screen shows the heading 'Settings' without any crash or error.
+        - type: instructions
+          step_description: Tap the 'Students' tab in the bottom tab bar.
+        - type: validation
+          step_description: The Students tab is selected and the screen shows the heading 'Students' without any crash or error.

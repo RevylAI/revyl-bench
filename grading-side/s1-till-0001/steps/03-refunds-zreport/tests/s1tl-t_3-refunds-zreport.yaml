@@ -1,0 +1,50 @@
+# Device-test suite for s1-till-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1tl-t_3-refunds-zreport
+        platform: ios
+    build:
+        name: bench-s1-till-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: instructions
+          step_description: Tap the 'Till' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Reconciliation block shows 'Opening float: $84.00', 'Cash sales: $31.90', 'Cash refunds: $3.45' and 'Expected cash: $112.45', and the Transactions list shows '#4 Refund $3.45' at the top."
+        - type: instructions
+          step_description: Tap the 'Sale' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Soup cup' product row in the catalog.
+        - type: instructions
+          step_description: "Tap the 'Tendered' input (the input showing the hint text '0.00') and type: 5.15"
+        - type: instructions
+          step_description: Tap the 'Tender' button.
+        - type: instructions
+          step_description: Tap the 'Refunds' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Enamel mug' product row.
+        - type: instructions
+          step_description: Tap the 'Wrong item (WRG)' reason option.
+        - type: instructions
+          step_description: Tap the 'Refund' button.
+        - type: instructions
+          step_description: Tap the 'Iced tea' product row.
+        - type: instructions
+          step_description: Tap the 'Damaged (DMG)' reason option.
+        - type: instructions
+          step_description: Tap the 'Refund' button.
+        - type: validation
+          step_description: "The Refunds screen shows the line 'Refunded: Iced tea $2.85 (DMG)'."
+        - type: instructions
+          step_description: Tap the 'Till' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Reconciliation block now shows 'Cash sales: $37.05', 'Cash refunds: $15.30' and 'Expected cash: $105.75', and the Transactions list shows '#7 Refund $2.85' at the top."
+        - type: instructions
+          step_description: Tap the 'Report' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Run Z-report' button.
+        - type: validation
+          step_description: "The report shows 'Sales: 4', 'Refunds: 3', 'Transactions: 7', 'Gross: $37.05', 'Refund total: $15.30' and 'Net: $21.75', and the By category block shows 'Drinks: $13.35', 'Food: $11.20' and 'Merch: $12.50'."

@@ -1,0 +1,21 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "TerminateOnlyAmiBuilders",
+      "Effect": "Allow",
+      "Action": "ec2:TerminateInstances",
+      "Resource": "arn:aws:ec2:us-west-2:<aws-account-id>:instance/*",
+      "Condition": { "StringEquals": { "aws:ResourceTag/Name": "revyl-bench-ami-builder" } }
+    },
+    {
+      "Sid": "TagAmisAndSnapshots",
+      "Effect": "Allow",
+      "Action": "ec2:CreateTags",
+      "Resource": [
+        "arn:aws:ec2:us-west-2::image/*",
+        "arn:aws:ec2:us-west-2::snapshot/*"
+      ]
+    }
+  ]
+}

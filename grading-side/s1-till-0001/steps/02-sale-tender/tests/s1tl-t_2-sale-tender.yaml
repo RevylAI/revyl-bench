@@ -1,0 +1,46 @@
+# Device-test suite for s1-till-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1tl-t_2-sale-tender
+        platform: ios
+    build:
+        name: bench-s1-till-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: instructions
+          step_description: Tap the 'Americano' product row in the catalog.
+        - type: instructions
+          step_description: Tap the 'Americano' product row again, as a second deliberate tap.
+        - type: validation
+          step_description: "The current sale panel shows the line 'Americano x2 $6.40' and the line 'Total: $6.40'."
+        - type: instructions
+          step_description: Tap the 'Brownie' product row in the catalog.
+        - type: validation
+          step_description: "The current sale panel shows 'Brownie x1 $3.45' and the line 'Total: $9.85'."
+        - type: instructions
+          step_description: "Tap the 'Tendered' input (the input showing the hint text '0.00') and type: 20.00"
+        - type: instructions
+          step_description: Tap the 'Tender' button.
+        - type: validation
+          step_description: "The Last sale block shows 'Change due: $10.15' with the lines '1 x $10', '1 x 10c' and '5 x 1c', and the sale panel has reset to 'Total: $0.00'."
+        - type: instructions
+          step_description: Tap the 'Till' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Transactions list shows '#5 Sale $9.85' at the top, with '#4 Refund $3.45' and '#3 Sale $15.35' beneath it."
+        - type: instructions
+          step_description: Tap the 'Sale' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Iced tea' product row in the catalog.
+        - type: instructions
+          step_description: Tap the 'Bagel' product row in the catalog.
+        - type: validation
+          step_description: "The current sale panel shows the line 'Total: $5.45'."
+        - type: instructions
+          step_description: "Tap the 'Tendered' input (the input showing the hint text '0.00') and type: 5.75"
+        - type: instructions
+          step_description: Tap the 'Tender' button.
+        - type: validation
+          step_description: "The Last sale block shows 'Change due: $0.30' with the lines '1 x 25c' and '5 x 1c', and no '10c' line."

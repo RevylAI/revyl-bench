@@ -1,0 +1,46 @@
+# Device-test suite for s1-scheduler-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1sc-t_2-booking
+        platform: ios
+    build:
+        name: bench-s1-scheduler-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: instructions
+          step_description: Tap the 'Book' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Book tab shows five room chips, the line 'Room: Aurora', inputs showing the hint texts 'Meeting title', 'Start (HH:MM)', 'End (HH:MM)' and 'Attendees', and a 'Request booking' button."
+        - type: instructions
+          step_description: Tap the 'Huddle' room chip.
+        - type: instructions
+          step_description: "Tap the start time input (the input showing the hint text 'Start (HH:MM)') and type: 12:00"
+        - type: instructions
+          step_description: "Tap the end time input (the input showing the hint text 'End (HH:MM)') and type: 13:00"
+        - type: instructions
+          step_description: "Tap the attendees input (the input showing the hint text 'Attendees') and type: 6"
+        - type: instructions
+          step_description: Tap the 'Request booking' button.
+        - type: validation
+          step_description: "The result line reads 'Rejected: 6 attendees exceeds capacity 4' and does not mention any overlap."
+        - type: instructions
+          step_description: Tap the 'Aurora' room chip.
+        - type: instructions
+          step_description: Tap the 'Request booking' button.
+        - type: validation
+          step_description: "The result line reads 'Rejected: overlaps Sprint Planning (11:00-12:30)'."
+        - type: instructions
+          step_description: "Tap the start time input to clear it and type: 09:45"
+        - type: instructions
+          step_description: "Tap the end time input to clear it and type: 11:00"
+        - type: instructions
+          step_description: Tap the 'Request booking' button.
+        - type: validation
+          step_description: "The result line reads 'Booked Aurora 09:45-11:00 for 6'."
+        - type: instructions
+          step_description: Tap the 'Rooms' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The 'Aurora' room row now shows '4 bookings' while 'Huddle' still shows '3 bookings'."

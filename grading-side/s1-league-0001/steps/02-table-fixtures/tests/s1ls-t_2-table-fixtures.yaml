@@ -1,0 +1,30 @@
+# Device-test suite for s1-league-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1ls-t_2-table-fixtures
+        platform: ios
+    build:
+        name: bench-s1-league-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: "The Table lists teams in the order 'Brightwell', 'Holloway', 'Fenwick', 'Garrick' from the top, and the 'Brightwell' row shows the values 4 3 0 1 8 6 2 9 across the P, W, D, L, GF, GA, GD and Pts columns."
+        - type: instructions
+          step_description: Scroll down the table until the last team row is visible.
+        - type: validation
+          step_description: "The bottom of the table shows 'Jarrow' and then 'Dunmore' last, with the 'Dunmore' row showing 4 0 2 2 4 9 -5 2."
+        - type: validation
+          step_description: "With the table scrolled to the bottom, the column label header row showing 'Team', 'P', 'W', 'D', 'L', 'GF', 'GA', 'GD' and 'Pts' is still visible pinned at the top."
+        - type: instructions
+          step_description: Tap the 'Eastvale' team row.
+        - type: validation
+          step_description: "The team detail screen for 'Eastvale' shows 'Played: 4', 'Goals for: 6', 'Goals against: 7', 'Goal difference: -1' and 'Points: 3'."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the table.
+        - type: instructions
+          step_description: Tap the 'Fixtures' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Fixtures tab lists the recorded results, one row per recorded result, rendered as '<home> <home goals> - <away goals> <away>' with a plain hyphen between the scores."

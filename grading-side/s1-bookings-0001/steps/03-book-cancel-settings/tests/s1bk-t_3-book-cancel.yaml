@@ -1,0 +1,68 @@
+# Device-test suite for s1-bookings-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1bk-t_3-book-cancel
+        platform: ios
+    build:
+        name: bench-s1-bookings-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: instructions
+          step_description: Tap the 'Focus Pod' room row.
+        - type: instructions
+          step_description: "Tap the start input at the bottom (the input showing the hint text 'HH:MM') and type: 10:30"
+        - type: instructions
+          step_description: "Tap the length input at the bottom (the input showing the hint text 'Minutes') and type: 30"
+        - type: instructions
+          step_description: Tap the 'Book' button.
+        - type: validation
+          step_description: "The status line under the composer reads 'You already have a booking at that time', and the timeline still shows exactly two rows, '09:00 to 10:00 Ana Costa' and '10:00 to 11:00 You'."
+        - type: instructions
+          step_description: "Tap the start input (the input showing the hint text 'HH:MM') and type: 09:00"
+        - type: instructions
+          step_description: "Tap the length input (the input showing the hint text 'Minutes') and type: 60"
+        - type: instructions
+          step_description: Tap the 'Book' button.
+        - type: validation
+          step_description: "A new timeline row '09:00 to 10:00 You (waitlisted)' is visible without any scrolling, between '09:00 to 10:00 Ana Costa' and '10:00 to 11:00 You', and the status line under the composer is empty."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the room list.
+        - type: instructions
+          step_description: Tap the 'Bookings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Bookings tab item in the bottom tab bar shows a numeric badge reading 1, and the first row of the list reads 'Focus Pod Mon 6 Apr 09:00 to 10:00' with the status 'waitlisted'."
+        - type: instructions
+          step_description: Tap the row reading 'Huddle Mon 6 Apr 11:00 to 12:00'.
+        - type: validation
+          step_description: "The booking screen title reads 'Huddle Mon 6 Apr 11:00 to 12:00' and its status line reads 'confirmed', with a 'Cancel booking' button."
+        - type: instructions
+          step_description: Tap the 'Cancel booking' button.
+        - type: validation
+          step_description: "The status line now reads 'cancelled, Fee $10.00' and the 'Cancel booking' button is gone."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the Bookings list.
+        - type: validation
+          step_description: "The row 'Huddle Mon 6 Apr 11:00 to 12:00' now reads 'cancelled, Fee $10.00'."
+        - type: instructions
+          step_description: Tap the 'Rooms' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The 'Huddle' row now reads 'Today: 44% booked' and 'Next free: 12:30'."
+        - type: instructions
+          step_description: Tap the 'Huddle' room row.
+        - type: validation
+          step_description: "The Huddle timeline reads '09:00 to 11:00 Ben Okafor', then '11:00 to 12:30 Emma Lindqvist' with no waitlisted suffix, then '11:00 to 12:00 Dev Patel (waitlisted)'."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the room list.
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Settings tab shows 'Booked this week: 14h 30m' and 'Fees charged: $20.00'."
+        - type: instructions
+          step_description: Turn on the 'Hide cancelled' switch.
+        - type: instructions
+          step_description: Tap the 'Bookings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Bookings list no longer shows any row for 'Huddle Mon 6 Apr 14:00 to 15:00' or 'Huddle Mon 6 Apr 11:00 to 12:00', and still shows 'Open Desks Mon 6 Apr 12:00 to 13:00' with the status 'confirmed'."

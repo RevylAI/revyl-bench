@@ -1,0 +1,58 @@
+# Device-test suite for s1-invoicing-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1in-t_3-payments-settings
+        platform: ios
+    build:
+        name: bench-s1-invoicing-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: instructions
+          step_description: Tap the 'Invoices' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'INV-1005' row.
+        - type: instructions
+          step_description: Scroll down the invoice screen until the totals are visible.
+        - type: validation
+          step_description: "The invoice screen titled 'INV-1005' reads 'Overdue', 'Paid $400.00' and 'Balance due $525.90', and an amount input (the input showing the hint text '0.00') with a 'Record payment' button is pinned at the bottom."
+        - type: instructions
+          step_description: "Tap the amount input at the bottom (the input showing the hint text '0.00') and type: 600.00"
+        - type: validation
+          step_description: "With the keyboard up, the amount input and the 'Record payment' button are both still visible on screen."
+        - type: instructions
+          step_description: Tap the 'Record payment' button.
+        - type: validation
+          step_description: "Without any further scrolling, the screen reads 'Paid $1,000.00' and 'Credit $74.10', the status reads 'Paid', and the amount input is empty again."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the invoice list.
+        - type: validation
+          step_description: "The Invoices tab item in the bottom tab bar shows a numeric badge reading 4, and the 'INV-1005' row now reads 'Paid'."
+        - type: instructions
+          step_description: Tap the 'Clients' tab in the bottom tab bar.
+        - type: validation
+          step_description: "'Solstice Cafe' now reads 'Outstanding $653.34' and '0 overdue', while 'Harbor Books' still reads 'Outstanding $1,361.83' and '2 overdue'."
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Settings tab shows 'Total outstanding: $10,139.52', 'Total collected: $7,213.35' and 'Overdue invoices: 4'."
+        - type: instructions
+          step_description: Turn on the 'Hide paid invoices' switch.
+        - type: instructions
+          step_description: Tap the 'Invoices' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap 'All' in the filter row at the top.
+        - type: validation
+          step_description: "The list no longer shows any row for 'INV-1005', 'INV-1003' or 'INV-1007', and still shows 'INV-1004' and 'INV-1006'."
+        - type: instructions
+          step_description: Tap 'Paid' in the filter row at the top.
+        - type: validation
+          step_description: "The list shows exactly three invoices, 'INV-1003', 'INV-1005' and 'INV-1007', each reading 'Paid'."
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Invoices' tab in the bottom tab bar.
+        - type: validation
+          step_description: "'Paid' is still selected in the filter row and the list still shows exactly 'INV-1003', 'INV-1005' and 'INV-1007'."

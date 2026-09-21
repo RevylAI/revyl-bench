@@ -1,0 +1,22 @@
+# Device-test suite for s1-food-delivery-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1fd-t_2-grid-filter-menu
+        platform: ios
+    build:
+        name: bench-s1-food-delivery-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: "The Restaurants tab is showing a heading 'Restaurants', a cuisine filter text input, and a grid of six restaurant cards: Nonna Lucia, Pasta Vesuvio, Casa Verde, Taqueria del Sol, Hanako Ramen, and Sakura Sushi Bar."
+        - type: instructions
+          step_description: Tap the cuisine filter input and type 'ital'.
+        - type: validation
+          step_description: The restaurant grid is filtered to show only the two Italian restaurants, Nonna Lucia and Pasta Vesuvio, and no other restaurant cards.
+        - type: instructions
+          step_description: Tap the 'Nonna Lucia' restaurant card.
+        - type: validation
+          step_description: The menu screen for Nonna Lucia is showing the restaurant name 'Nonna Lucia', its cuisine 'Italian' and delivery ETA '28 min', and a list of menu items with prices including 'Margherita Pizza' $14.99, 'Spaghetti Carbonara' $16.99, and 'Tiramisu' $8.99.

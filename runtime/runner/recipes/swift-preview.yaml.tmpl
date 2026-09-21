@@ -1,0 +1,21 @@
+# Grader-owned build recipe for a native SwiftUI scaffold (bench/recipes.py build_recipe,
+# technology="swift"). Written over the agent's .revyl/config.yaml by runner/grade.py before
+# `revyl build --remote`; the agent's own copy is discarded. One target, no dependencies, no
+# setup commands and no caches: the tree is a committed .xcodeproj plus Sources/, so the
+# runner's only work is xcodebuild. Placeholders are filled by string.Template; a missing one
+# raises, so a half-rendered recipe never reaches `revyl build`.
+project:
+    id: $project_id
+session:
+    idle_timeout_seconds: 1800
+build:
+    framework: ios
+    profiles:
+        $profile:
+            ios:
+                app_id: $app_id
+                image: ios-macos-26-xcode-26.5
+                timeout_seconds: 1800
+                build_commands:
+                    - xcodebuild -project $scheme.xcodeproj -scheme $scheme -configuration $configuration -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath build ARCHS=arm64 CODE_SIGNING_ALLOWED=NO
+                output_path: build/Build/Products/$configuration-iphonesimulator/*.app

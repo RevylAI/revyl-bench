@@ -1,0 +1,70 @@
+# Harbor-compatible task definition - s1-habits-0001 (revyl-bench season 1). Layout: docs/tasks.md
+
+schema_version = "1.1"
+artifacts = ["/logs/verifier", "/app/.git"]
+
+[task]
+name = "revyl/s1-habits-0001"
+version = "1.0.0"
+description = "Build a mobile habit tracker (Expo/TypeScript, iOS) from a blank scaffold in three verified steps: tab shell + a habits list showing current streaks, a pushed habit detail with the longest streak, completion percentage and a 28-day log, then marking today plus settings totals. Streaks are order-dependent over a fixed 28-day window. Every submission is graded against the FULL frozen suite (three step tests + final e2e) by Revyl device tests on a cloud iOS simulator with screenshot validations."
+keywords = ["mobile", "expo", "react-native", "typescript", "device-verified", "multi-step", "greenfield", "benchmark"]
+multi_step_reward_strategy = "final"
+
+[[task.authors]]
+name = "Revyl"
+
+[metadata]
+sample_id = "s1-habits-0001"
+archetype = "habits"
+language = "typescript"
+platform = "ios"
+source_status = "synthetic_permission_clean"
+category = ["feature-implementation", "root-cause-analysis", "code-onboarding"]
+task_version = 2
+verifier = "revyl-frozen-device-tests"
+verifier_stability = "every frozen test returned the same verdict on repeated device runs against a reference build; the run records are held by Revyl"
+frozen_test_names = ["s1ht-t_1-tabs", "s1ht-t_2-habits-detail", "s1ht-t_3-mark-settings", "s1ht-final-e2e"]
+grading = "full-suite-per-submission"
+
+[environment]
+build_timeout_sec = 1200.0
+os = "linux"
+cpus = 4
+memory_mb = 8192
+storage_mb = 20480
+network_mode = "allowlist"
+env = { REVYL_API_KEY = "${REVYL_API_KEY}" }   # agent-org key only; builds run in the runner
+
+[agent]
+timeout_sec = 28800.0
+network_mode = "allowlist"
+allowed_hosts = ["*.revyl.ai", "*.revyl.com", "*.expo.dev", "*.exp.host", "*.eas.build", "registry.npmjs.org", "*.npmjs.org", "api.github.com", "github.com"]
+
+[verifier]
+timeout_sec = 3600.0
+network_mode = "allowlist"
+allowed_hosts = ["*.revyl.ai", "*.revyl.com"]
+
+[[steps]]
+name = "01-tabs"
+min_reward = 1.0
+
+[[steps]]
+name = "02-habits-detail"
+min_reward = 1.0
+
+[[steps]]
+name = "03-mark-settings"
+min_reward = 1.0
+
+# --- revyl-bench-runtime provisioning (auto-written) ---
+# Ids minted by provisioning (docs/organizations.md): the grading app and suite workflow
+# in the grading organisation, the dev app and dev-client pin in the agent organisation.
+# NOT secret — only the keys are. The organisations themselves are named by the launch
+# environment (REVYL_GRADING_ORG_ID / REVYL_AGENT_ORG_ID in runtime/.env), not here.
+[runtime.agent]
+scaffold = "scaffolds/s1-habits-0001"
+base_commit = "b458ffd050067d1d51e6c8354f2b6113406e800d"
+expo_sdk = 57
+ios_scheme = "benchs1habits0001"
+# --- end runtime provisioning ---

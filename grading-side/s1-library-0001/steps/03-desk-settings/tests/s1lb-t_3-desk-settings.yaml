@@ -1,0 +1,50 @@
+# Device-test suite for s1-library-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1lb-t_3-desk-settings
+        platform: ios
+    build:
+        name: bench-s1-library-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: instructions
+          step_description: Tap the 'Desk' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Desk tab shows 'Most overdue: A Field Guide to Nowhere, 12 days'."
+        - type: validation
+          step_description: "The Fines block reads 'Accruing on loans out: $13.80', 'Charged on returns: $8.55' and 'Total owed: $22.35'."
+        - type: validation
+          step_description: "The Desk tab shows 'Collection rate: 62.5%'."
+        - type: validation
+          step_description: "The Availability block lists 'Winter Arithmetic: 0 of 2' and 'The Glass Harbor: 1 of 3'."
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Settings tab shows a 'Library' block with 'Members: 5', 'Titles: 6' and 'Copies: 14'."
+        - type: validation
+          step_description: "The 'Library' block shows 'Loans out: 9', 'Completed loans: 8' and 'Total owed: $22.35'."
+        - type: instructions
+          step_description: Tap the 'Loans' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Return' control on the 'A Field Guide to Nowhere' entry for 'Priya Raman'.
+        - type: instructions
+          step_description: Tap the 'Desk' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Desk tab now shows 'Most overdue: Winter Arithmetic, 11 days'."
+        - type: validation
+          step_description: "The Fines block reads 'Accruing on loans out: $9.80' and 'Charged on returns: $12.55', while 'Total owed: $22.35' is unchanged."
+        - type: validation
+          step_description: "The Desk tab shows 'Collection rate: 55.6%', and the Availability block lists 'A Field Guide to Nowhere: 2 of 2'."
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The 'Library' block now shows 'Loans out: 8', 'Completed loans: 9' and 'Total owed: $22.35'."
+        - type: instructions
+          step_description: Tap the 'Loans' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Desk' tab in the bottom tab bar again.
+        - type: validation
+          step_description: "The state persisted after navigating away and back: the Desk tab still shows 'Most overdue: Winter Arithmetic, 11 days' and 'Collection rate: 55.6%'."

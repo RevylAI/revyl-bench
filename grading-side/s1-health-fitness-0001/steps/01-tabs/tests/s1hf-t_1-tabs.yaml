@@ -1,0 +1,26 @@
+# Device-test suite for s1-health-fitness-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1hf-t_1-tabs
+        platform: ios
+    build:
+        name: bench-s1-health-fitness-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "5"
+        - type: validation
+          step_description: Verify the app launched without a red screen or runtime error, and the bottom tab bar shows the text 'Log', 'History', and 'Progress'.
+        - type: instructions
+          step_description: Tap on the 'History' tab in the bottom tab bar.
+        - type: validation
+          step_description: Verify the History screen shows the title text 'History' without any crash or error.
+        - type: instructions
+          step_description: Tap on the 'Progress' tab in the bottom tab bar.
+        - type: validation
+          step_description: Verify the Progress screen shows the title text 'Progress' without any crash or error.
+        - type: instructions
+          step_description: Tap on the 'Log' tab in the bottom tab bar.
+        - type: validation
+          step_description: Verify the Log screen shows the title text 'Log' without any crash or error.

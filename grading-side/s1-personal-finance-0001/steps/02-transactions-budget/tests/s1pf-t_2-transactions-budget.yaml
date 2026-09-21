@@ -1,0 +1,32 @@
+# Device-test suite for s1-personal-finance-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1pf-t_2-transactions-budget
+        platform: ios
+    build:
+        name: bench-s1-personal-finance-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: The app has launched to the Accounts screen showing two account cards, 'Everyday Checking' with balance $2,450.00 and 'Rainy Day Savings' with balance $8,000.00, above a transactions list grouped under date headers (like 'Jul 1'), where the income row 'Paycheck' shows a green +$1,500.00 while expense rows show minus amounts.
+        - type: instructions
+          step_description: Tap the 'Pizza Night' transaction row in the transaction list, scrolling down first if it is not visible.
+        - type: validation
+          step_description: The transaction detail screen shows 'Pizza Night' with amount -$60.00 and date Jul 18, above a category list where 'Entertainment' is the selected category (checkmark).
+        - type: instructions
+          step_description: Tap the 'Dining' category row.
+        - type: instructions
+          step_description: Tap the 'Apply category' button.
+        - type: validation
+          step_description: The button now reads 'Category updated' and the 'Dining' category row shows the checkmark.
+        - type: instructions
+          step_description: Tap the 'Back to Accounts' button.
+        - type: instructions
+          step_description: Tap the 'Budget' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Budget screen shows a Dining row reading 'Dining: $240.00 of $200.00' with a red warning line 'Over budget: Dining +$40.00' beneath its progress bar."
+        - type: validation
+          step_description: "The Entertainment row reads 'Entertainment: $40.00 of $100.00' with no over-budget warning, confirming exactly one transaction moved between categories."

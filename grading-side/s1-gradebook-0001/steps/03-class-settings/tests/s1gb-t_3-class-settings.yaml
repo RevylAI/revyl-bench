@@ -1,0 +1,50 @@
+# Device-test suite for s1-gradebook-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1gb-t_3-class-settings
+        platform: ios
+    build:
+        name: bench-s1-gradebook-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: instructions
+          step_description: Tap the 'Class' tab in the bottom tab bar.
+        - type: validation
+          step_description: The Assessments block lists 'HW1 85.0% (6 scores)', 'HW2 83.0% (5 scores)' and 'HW3 85.8% (6 scores)'.
+        - type: validation
+          step_description: The Assessments block lists 'Quiz 1 83.8% (6 scores)', 'Quiz 2 82.5% (5 scores)' and 'Midterm 82.5% (6 scores)'.
+        - type: validation
+          step_description: "The screen shows the line 'Hardest assessment: Quiz 2'."
+        - type: instructions
+          step_description: Scroll down the Class tab until the Ranking block is visible.
+        - type: validation
+          step_description: The Ranking block lists '1. Ben 90.0 A', '2. Ethan 85.3 B', '3. Aisha 85.3 B', '4. Chloe 85.3 B', '5. Farah 75.1 C' and '6. Diana 72.5 C' in that order.
+        - type: instructions
+          step_description: Tap the 'Students' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Scroll down the Students tab until the 'Record a score' section is visible.
+        - type: instructions
+          step_description: In the 'Record a score' section, tap the 'Diana' button in the 'Student' row.
+        - type: instructions
+          step_description: Tap the 'Quiz 2' button in the 'Assessment' row.
+        - type: instructions
+          step_description: "Tap the score input and type: 38"
+        - type: instructions
+          step_description: Tap the 'Save' button.
+        - type: instructions
+          step_description: Tap the 'Class' tab in the bottom tab bar.
+        - type: validation
+          step_description: The Assessments block now shows 'Quiz 2 84.6% (6 scores)' where it showed 'Quiz 2 82.5% (5 scores)' before.
+        - type: validation
+          step_description: "The line now reads 'Hardest assessment: Midterm'."
+        - type: instructions
+          step_description: Scroll down the Class tab until the Ranking block is visible.
+        - type: validation
+          step_description: The Ranking block has re-sorted and now ends with '5. Diana 80.0 B' and '6. Farah 75.1 C'.
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Settings tab shows 'Students: 6', 'Assessments: 6' and 'Scores recorded: 35', and the Weights block lists 'Homework 20%', 'Quizzes 30%' and 'Exams 50%'."

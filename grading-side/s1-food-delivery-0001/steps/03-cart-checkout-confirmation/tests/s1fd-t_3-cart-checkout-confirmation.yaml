@@ -1,0 +1,44 @@
+# Device-test suite for s1-food-delivery-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1fd-t_3-cart-checkout-confirmation
+        platform: ios
+    build:
+        name: bench-s1-food-delivery-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: validation
+          step_description: "The Restaurants tab is showing a heading 'Restaurants', a cuisine filter text input, and a grid of six restaurant cards: Nonna Lucia, Pasta Vesuvio, Casa Verde, Taqueria del Sol, Hanako Ramen, and Sakura Sushi Bar."
+        - type: instructions
+          step_description: Tap the 'Nonna Lucia' restaurant card.
+        - type: validation
+          step_description: The menu screen for Nonna Lucia is showing menu items with prices, including 'Margherita Pizza' $14.99, each with an 'Add to cart' button.
+        - type: instructions
+          step_description: Tap the 'Add to cart' button on the 'Margherita Pizza' row.
+        - type: validation
+          step_description: The button on the 'Margherita Pizza' row now reads 'In cart (1)', indicating the item was added to the cart.
+        - type: instructions
+          step_description: Tap the back control at the top-left of the header to return to the Restaurants grid.
+        - type: instructions
+          step_description: Tap the 'Cart' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Cart screen shows the heading 'Cart' and exactly one row for 'Margherita Pizza' with quantity 1, and the Subtotal reads $14.99."
+        - type: instructions
+          step_description: Tap the '+' (increment) button on the 'Margherita Pizza' cart row once.
+        - type: validation
+          step_description: "The 'Margherita Pizza' row now shows quantity 2 with the detail line '$14.99 each · line: $29.98', and the Subtotal reads $29.98."
+        - type: instructions
+          step_description: Tap the 'Checkout' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Checkout screen shows the heading 'Checkout', a Deliver to address picker with the options Home, Work, and Other (none selected), the lines Subtotal $29.98, Delivery fee $3.99, Tax (8%) $2.40, and Total $36.37."
+        - type: instructions
+          step_description: Tap the 'Home' address option in the address picker.
+        - type: validation
+          step_description: The 'Home' address option is now selected (visibly marked).
+        - type: instructions
+          step_description: Tap the 'Place order' button.
+        - type: validation
+          step_description: "The order confirmation screen is showing 'Order placed', the order ID 'ORDER-000001' in large text, 'Arriving in ~28 min', and 'from Nonna Lucia'."

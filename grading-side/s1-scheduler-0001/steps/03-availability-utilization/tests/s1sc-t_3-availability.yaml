@@ -1,0 +1,50 @@
+# Device-test suite for s1-scheduler-0001. Withheld from the agent at run time; loaded into your own
+# grading organisation by runtime/provision/provision_grading.py (see grading-side/README.md).
+test:
+    metadata:
+        name: s1sc-t_3-availability
+        platform: ios
+    build:
+        name: bench-s1-scheduler-0001
+    blocks:
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: instructions
+          step_description: Tap the 'Aurora' room row.
+        - type: validation
+          step_description: "The room detail for 'Aurora' shows 'Seats 12' and the line 'Booked 215 min (35.8%)'."
+        - type: validation
+          step_description: "The Availability section for 'Aurora' lists '08:00-08:30 (30 min)', '09:45-11:00 (75 min)', '12:30-14:15 (105 min)' and '15:05-18:00 (175 min)' in that order."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the room list.
+        - type: instructions
+          step_description: Tap the 'Fern' room row.
+        - type: validation
+          step_description: "The Availability section for 'Fern' lists exactly three rows, '08:00-10:00 (120 min)', '11:45-15:30 (225 min)' and '16:15-18:00 (105 min)', with no availability row between the '10:00-11:00 UX Critique (5)' and '11:00-11:45 Copy Review (3)' schedule rows."
+        - type: instructions
+          step_description: Tap the back button at the top-left to return to the room list.
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Office block shows 'Rooms: 5', 'Bookings: 14', 'Booked: 935 min' and 'Utilization: 31.2%'."
+        - type: validation
+          step_description: "The By room block lists 'Aurora: 215 min, 35.8%', 'Boardroom: 285 min, 47.5%', 'Fern: 150 min, 25.0%', 'Huddle: 125 min, 20.8%' and 'Lumen: 160 min, 26.7%' in that order."
+        - type: instructions
+          step_description: Tap the 'Book' tab in the bottom tab bar.
+        - type: instructions
+          step_description: Tap the 'Aurora' room chip.
+        - type: instructions
+          step_description: "Tap the start time input (the input showing the hint text 'Start (HH:MM)') and type: 09:45"
+        - type: instructions
+          step_description: "Tap the end time input (the input showing the hint text 'End (HH:MM)') and type: 11:00"
+        - type: instructions
+          step_description: "Tap the attendees input (the input showing the hint text 'Attendees') and type: 12"
+        - type: instructions
+          step_description: Tap the 'Request booking' button.
+        - type: validation
+          step_description: "The result line reads 'Booked Aurora 09:45-11:00 for 12'."
+        - type: instructions
+          step_description: Tap the 'Settings' tab in the bottom tab bar.
+        - type: validation
+          step_description: "The Settings tab now shows 'Bookings: 15', 'Booked: 1010 min', 'Utilization: 33.7%' and 'Aurora: 290 min, 48.3%'."

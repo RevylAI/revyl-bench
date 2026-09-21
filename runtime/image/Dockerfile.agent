@@ -1,0 +1,78 @@
+# revyl-bench agent image — what the agent container gets.
+# One image per harness × Expo SDK, tagged revyl-bench-agent:<harness>-sdk<NN>.
+# Build (from repo root):
+#   docker build -f image/Dockerfile.agent \
+#     --build-arg HARNESS_INSTALL="npm i -g @anthropic-ai/claude-code@2.1.235" \
+#     --build-arg SDK=57 -t revyl-bench-agent:claude-code-sdk57 .
+#
+# Contents = a thin client: node + expo tooling, the revyl CLI at
+# the SAME pinned version as the runner (flag sets and the pin trap are version-specific),
+# git/jq/python3, the harness, and /opt/bench/{submit.sh,entrypoint.sh}. NO credentials
+# are baked in (they arrive via agent.env at run time), no EXPO_TOKEN ever, no docker
+# socket. Runs as the non-root user `agent` (uid 1000) — Claude Code refuses
+# --dangerously-skip-permissions as root, and non-root is the right posture anyway.
+FROM ubuntu:24.04
+ARG SDK=57
+ARG HARNESS_INSTALL="npm i -g @anthropic-ai/claude-code@2.1.235"
+# revyl CLI pin: the ONLY source of truth is image/REVYL_CLI_VERSION (single line, e.g. v0.1.96),
+# COPY'd in and asserted below. Deliberately NO build-arg override: an image whose binary
+# differs from the copied pin file would be refused by runner/main.py and the launch guards
+# anyway. To try a candidate version, change the file on a branch.
+ARG EAS_VERSION=22.0.0
+ARG NODE_MAJOR=22
+# NOTE: no container-wide CI=1 — `revyl dev` refuses to run under CI ("use revyl test
+# run"), and the agent's dev loop is `revyl dev`. npm/eas
+# non-interactivity is handled per command instead.
+ENV DEBIAN_FRONTEND=noninteractive \
+    BENCH_EXPO_SDK=${SDK}
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      ca-certificates curl git jq python3 unzip xz-utils bash procps openssh-client tini \
+    && rm -rf /var/lib/apt/lists/*
+
+# node LTS (Expo SDK 56/57 need node >= 20). eas-cli is installed for `expo`/`eas` project
+# tooling parity with the fixtures; WITHOUT a token it cannot build — by design.
+RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_MAJOR}.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && rm -rf /var/lib/apt/lists/* \
+    && npm i -g eas-cli@${EAS_VERSION} \
+    && ${HARNESS_INSTALL}
+
+# revyl CLI, pinned, system-wide (the installer honours REVYL_VERSION / REVYL_INSTALL_DIR).
+# `test -n` guards against an empty version reaching install.sh (which would silently install
+# LATEST — the exact drift this file exists to prevent); `grep -Fx` makes the build FAIL if the
+# installed binary does not report the pinned version. The server enforces a minimum CLI
+# version and rejects older ones with no client-side warning, so a wrong
+# baked version would otherwise only surface 35 minutes into a rollout.
+# No update nag in any output we parse (the CLI prints "Update available: X -> Y" otherwise),
+# and no telemetry from inside the benchmark containers.
+ENV REVYL_NO_UPDATE_NOTIFIER=1 REVYL_TELEMETRY_DISABLED=1
+COPY image/REVYL_CLI_VERSION /opt/bench/REVYL_CLI_VERSION
+RUN v="$(cat /opt/bench/REVYL_CLI_VERSION)" && test -n "$v" \
+    && curl -fsSL https://revyl.com/install.sh | REVYL_VERSION="$v" REVYL_INSTALL_DIR=/usr/local/bin sh \
+    && revyl --version | grep -Fx "revyl version $v"
+
+# ubuntu:24.04 ships uid 1000 as `ubuntu`; we want that uid to be `agent` (matches bind-mount
+# ownership on Linux hosts and the /home/agent transcript paths in the registry).
+RUN userdel -r ubuntu 2>/dev/null || true \
+    && useradd -m -u 1000 -s /bin/bash agent \
+    && mkdir -p /workspace /mailbox/submit /mailbox/feedback /log \
+    && chown -R agent:agent /workspace /mailbox /log
+
+COPY container/submit.sh container/checkpoint.sh container/devbuild.sh container/entrypoint.sh /opt/bench/
+RUN chmod 755 /opt/bench/*.sh
+
+USER agent
+ENV HOME=/home/agent
+# Revyl agent skills, the same four for every harness (protocol 6, 2026-09-09). The CLI
+# ships them embedded but never installs them by itself — until now no contestant had
+# any and each learned the CLI from the RUNBOOK plus --help. `--global` writes
+# /home/agent/.claude/skills/<name>/SKILL.md (read by Claude Code AND by opencode, which
+# scans ~/.claude/skills) and /home/agent/.codex/skills/<name>/SKILL.md (Codex). The
+# agent-home named volume is created empty per rollout and Docker seeds it from this
+# image's /home/agent, so the files reach the container. The two `test -f` lines make a
+# CLI version that changes the layout fail the image build instead of silently
+# shipping an image without skills. The install needs no auth and no network.
+RUN revyl skill install --claude --codex --global --force     && test -f /home/agent/.claude/skills/revyl-cli-dev-loop/SKILL.md     && test -f /home/agent/.codex/skills/revyl-cli-dev-loop/SKILL.md     && ls /home/agent/.claude/skills
+WORKDIR /workspace
+ENTRYPOINT ["/usr/bin/tini", "--", "/opt/bench/entrypoint.sh"]
