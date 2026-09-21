@@ -58,7 +58,7 @@ public from the start, and since 2026-09-20 so are the test suites; a suite reve
 order and phrasing of the checks, not values, because every value it asserts is already in
 the contract. A model trained on data collected after that date may have seen both, and
 its result should say so. What the benchmark measures is the
-transfer skill: read a precise product contract, build it, verify it on a real device,
+transfer skill: read a precise product contract, build it, verify it on a cloud simulator,
 and repair it from evidence. Task sets rotate by season, and the generator that produces
 them can produce new archetypes and new contracts faster than any could leak.
 
