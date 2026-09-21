@@ -1,7 +1,7 @@
 # revyl-bench
 
 **How well can coding agents build real mobile apps from a specification, verified on
-real devices, graded by device tests the agent never sees, and auditable down to the
+cloud simulators, graded by device tests the agent never sees, and auditable down to the
 screenshot?**
 
 revyl-bench is a benchmark. An agent (a model paired with a coding harness) starts from a
